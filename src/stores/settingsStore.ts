@@ -7,6 +7,7 @@ interface SettingsState {
   theme: Theme
   streaming: boolean
   parameters: Parameters
+  apiUrl: string | null // Custom API URL override
 
   // Actions
   setTheme: (theme: Theme) => void
@@ -15,6 +16,7 @@ interface SettingsState {
   setSystemPrompt: (prompt: string) => void
   applyPreset: (preset: PresetName) => void
   resetParameters: () => void
+  setApiUrl: (url: string | null) => void
 }
 
 const defaultParameters: Parameters = {
@@ -32,6 +34,7 @@ export const useSettingsStore = create<SettingsState>()(
       theme: 'dark',
       streaming: true,
       parameters: defaultParameters,
+      apiUrl: null,
 
       setTheme: (theme) => {
         document.documentElement.setAttribute('data-theme', theme)
@@ -61,6 +64,8 @@ export const useSettingsStore = create<SettingsState>()(
         set((state) => ({
           parameters: { ...state.parameters, ...PRESETS.balanced },
         })),
+
+      setApiUrl: (url) => set({ apiUrl: url }),
     }),
     {
       name: 'modelgarden-settings',

@@ -13,7 +13,7 @@ import type { Chat } from '@/types'
 export function HistorySidebar() {
   const [searchQuery, setSearchQuery] = useState('')
   const { chats, currentChatId, createChat, selectChat, deleteChat } = useChatStore()
-  const { models, isLoading } = useModelStore()
+  const { models, isLoading, error, loadModels } = useModelStore()
   const { addToast } = useToast()
 
   const handleNewChat = async () => {
@@ -70,6 +70,19 @@ export function HistorySidebar() {
           <div className="space-y-1.5">
             {isLoading ? (
               <ModelCardSkeleton />
+            ) : error ? (
+              <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-xs">
+                <p className="font-semibold mb-1">Failed to load models</p>
+                <p>{error}</p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full mt-2 h-7 text-xs border-destructive/30 hover:bg-destructive/20"
+                  onClick={() => loadModels()}
+                >
+                  Retry
+                </Button>
+              </div>
             ) : models.length === 0 ? (
               <p className="text-sm text-muted-foreground text-center py-4">
                 No models found

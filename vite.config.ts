@@ -11,7 +11,20 @@ export default defineConfig({
   },
   server: {
     port: 3000,
-    host: true,
+    strictPort: true,
+    host: '0.0.0.0',
+    cors: true,
+    allowedHosts: true,
+    hmr: {
+      clientPort: 3000,
+    },
+    proxy: {
+      '/v1': {
+        target: 'http://127.0.0.1:1234',
+        changeOrigin: true,
+        secure: false,
+      },
+    },
   },
   build: {
     outDir: 'dist',

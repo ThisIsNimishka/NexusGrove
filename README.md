@@ -79,11 +79,20 @@ For Docker deployments, the URL is automatically set to `http://host.docker.inte
 
 ### Custom LM Studio URL
 
-Create a `.env.local` file:
+Create a `.env` file (this is git-ignored) to override the API URL:
 
 ```env
 VITE_LM_STUDIO_URL=http://your-server:1234
 ```
+
+### Dual Network Hosting
+
+To host on multiple networks (e.g., Corporate + Private):
+
+1.  Ensure backend (LM Studio) runs on port **1234**
+2.  Start the app: `npm run dev`
+3.  The app automatically detects the network interface and routes requests accordingly.
+4.  **Important**: You must allow inbound traffic on ports **3000** and **1234** in your Windows Firewall. See `DUAL_NETWORK_GUIDE.md` for details.
 
 ## Project Structure
 

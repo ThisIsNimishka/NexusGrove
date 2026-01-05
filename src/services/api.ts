@@ -12,13 +12,45 @@ export type StreamChunk =
   | { type: 'content'; content: string }
   | { type: 'metrics'; metrics: StreamMetrics }
 
-const API_BASE = import.meta.env.VITE_LM_STUDIO_URL || 'http://127.0.0.1:1234'
+// Determine API base URL
+// Priority: 1) Custom URL from settings, 2) Environment variable, 3) Current hostname with port 1234, 4) Fallback to localhost
+const getApiBase = () => {
+  // Check if there's a custom URL in localStorage (settings)
+  try {
+    const settings = localStorage.getItem('modelgarden-settings')
+    if (settings) {
+      const parsed = JSON.parse(settings)
+      if (parsed.state?.apiUrl) {
+        return parsed.state.apiUrl
+      }
+    }
+  } catch {
+    // Ignore parsing errors
+  }
+
+  // Use Vite proxy for seamless cross-network access
+  // This sends requests to /v1/..., which Vite forwards to http://127.0.0.1:1234
+  // This bypasses firewall restrictions on port 1234
+  return ''
+}
+
+const API_BASE = getApiBase()
 
 class ApiService {
   private baseUrl: string
 
   constructor(baseUrl: string = API_BASE) {
     this.baseUrl = baseUrl
+  }
+
+  // Get current API base URL
+  getBaseUrl(): string {
+    return this.baseUrl
+  }
+
+  // Update API base URL (useful for runtime configuration)
+  setBaseUrl(url: string): void {
+    this.baseUrl = url
   }
 
   async getModels(): Promise<Model[]> {

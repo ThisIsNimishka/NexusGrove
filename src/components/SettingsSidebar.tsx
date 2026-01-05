@@ -1,12 +1,14 @@
 import { useState } from 'react'
 import { Palette, Sparkles, SlidersHorizontal, Terminal, Network, Unplug, RefreshCw } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+
 import { Slider } from '@/components/ui/slider'
 import { Textarea } from '@/components/ui/textarea'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useSettingsStore } from '@/stores/settingsStore'
 import { useModelStore } from '@/stores/modelStore'
 import { useToast } from '@/components/ui/toast'
+
 import { cn } from '@/lib/utils'
 import type { Theme, PresetName } from '@/types'
 
@@ -26,6 +28,8 @@ const PRESETS: { id: PresetName; name: string; icon: string; desc: string }[] = 
 
 export function SettingsSidebar() {
   const [isRefreshing, setIsRefreshing] = useState(false)
+
+
   const {
     theme,
     setTheme,
@@ -34,6 +38,7 @@ export function SettingsSidebar() {
     setSystemPrompt,
     applyPreset,
     resetParameters,
+
   } = useSettingsStore()
   const { isConnected, loadModels } = useModelStore()
   const { addToast } = useToast()
@@ -53,6 +58,8 @@ export function SettingsSidebar() {
     applyPreset(preset)
     addToast(`Preset: ${preset}`, 'success')
   }
+
+
 
   return (
     <aside className="w-80 bg-secondary border-l border-border flex flex-col">
@@ -92,8 +99,8 @@ export function SettingsSidebar() {
                     'bg-card border-border hover:border-primary hover:translate-x-1',
                     // Check if current params match preset (simplified check)
                     parameters.temperature ===
-                      { creative: 1.2, balanced: 0.7, precise: 0.3, coding: 0.2 }[preset.id] &&
-                      'bg-primary/10 border-primary'
+                    { creative: 1.2, balanced: 0.7, precise: 0.3, coding: 0.2 }[preset.id] &&
+                    'bg-primary/10 border-primary'
                   )}
                 >
                   <div className="flex items-center gap-2 text-sm font-semibold">
@@ -158,6 +165,8 @@ export function SettingsSidebar() {
               />
             </div>
           </section>
+
+
 
           {/* System Prompt */}
           <section>
