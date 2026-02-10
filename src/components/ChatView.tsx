@@ -41,7 +41,7 @@ export function ChatView() {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const abortControllerRef = useRef<AbortController | null>(null)
 
-  const { currentChatId, getCurrentChat, addMessage, updateChatTitle, isGenerating, setGenerating } =
+  const { currentChatId, getCurrentChat, addMessage, updateChatTitle, isGenerating, setGenerating, isLoading: isChatsLoading } =
     useChatStore()
   const { selectedModelId, loadModels } = useModelStore()
   const { streaming, parameters } = useSettingsStore()
@@ -108,9 +108,9 @@ export function ChatView() {
     // Build message content
     const content = currentImage
       ? [
-          { type: 'text' as const, text: text || 'What do you see in this image?' },
-          { type: 'image_url' as const, image_url: { url: currentImage } },
-        ]
+        { type: 'text' as const, text: text || 'What do you see in this image?' },
+        { type: 'image_url' as const, image_url: { url: currentImage } },
+      ]
       : text
 
     // Add user message
@@ -247,7 +247,9 @@ export function ChatView() {
       {/* Messages */}
       <ScrollArea className="flex-1" viewportRef={scrollViewportRef}>
         <div className="p-6 space-y-5">
-          {messages.length === 0 ? (
+          {isChatsLoading ? (
+            <ChatLoadingSkeleton />
+          ) : messages.length === 0 ? (
             <WelcomeState onPromptClick={handleQuickPrompt} />
           ) : (
             <>
@@ -411,6 +413,33 @@ function WelcomeState({ onPromptClick }: { onPromptClick: (text: string) => void
               {text}
             </p>
           </button>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function ChatLoadingSkeleton() {
+  return (
+    <div className="flex-1 flex flex-col items-center justify-center text-center py-12 space-y-5">
+      <div className="w-[72px] h-[72px] rounded-3xl bg-gradient-to-br from-primary/30 to-accent/30 flex items-center justify-center animate-pulse">
+        <Sprout className="w-8 h-8 text-primary/40" />
+      </div>
+      <div className="space-y-3 w-full max-w-md">
+        <div className="h-5 bg-muted/50 rounded-lg w-48 mx-auto animate-pulse" />
+        <div className="h-3 bg-muted/30 rounded-lg w-64 mx-auto animate-pulse" style={{ animationDelay: '0.1s' }} />
+      </div>
+      <div className="grid grid-cols-2 gap-3 max-w-lg mt-4 w-full">
+        {[0, 1, 2, 3].map((i) => (
+          <div
+            key={i}
+            className="p-4 rounded-xl bg-card/50 border border-border/50 animate-pulse"
+            style={{ animationDelay: `${i * 0.1}s` }}
+          >
+            <div className="w-5 h-5 rounded bg-muted/40 mb-2" />
+            <div className="h-3 bg-muted/30 rounded w-full" />
+            <div className="h-3 bg-muted/20 rounded w-3/4 mt-1.5" />
+          </div>
         ))}
       </div>
     </div>

@@ -5,6 +5,7 @@ import { db } from '@/services/database'
 interface ChatState {
   chats: Chat[]
   currentChatId: string | null
+  isLoading: boolean
   isGenerating: boolean
 
   // Actions
@@ -23,19 +24,24 @@ interface ChatState {
 export const useChatStore = create<ChatState>((set, get) => ({
   chats: [],
   currentChatId: null,
+  isLoading: true,
   isGenerating: false,
 
   loadChats: async () => {
-    const chats = await db.getAllChats()
-    set({ chats })
+    try {
+      const chats = await db.getAllChats()
+      set({ chats })
 
-    // Select most recent chat or create new one
-    if (chats.length > 0) {
-      const mostRecent = chats.reduce((a, b) => (a.updatedAt > b.updatedAt ? a : b))
-      set({ currentChatId: mostRecent.id })
-    } else {
-      const chatId = await get().createChat()
-      set({ currentChatId: chatId })
+      // Select most recent chat or create new one
+      if (chats.length > 0) {
+        const mostRecent = chats.reduce((a, b) => (a.updatedAt > b.updatedAt ? a : b))
+        set({ currentChatId: mostRecent.id })
+      } else {
+        const chatId = await get().createChat()
+        set({ currentChatId: chatId })
+      }
+    } finally {
+      set({ isLoading: false })
     }
   },
 
