@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { ArrowRight, Sprout } from 'lucide-react'
 import { useModelStore } from '@/stores/modelStore'
 
@@ -8,24 +8,29 @@ interface SplashScreenProps {
 
 export function SplashScreen({ onEnter }: SplashScreenProps) {
   const [isExiting, setIsExiting] = useState(false)
+  const isExitingRef = useRef(false)
   const isConnected = useModelStore((s) => s.isConnected)
 
-  const handleEnter = () => {
+  const handleEnter = useCallback(() => {
+    // Guard against multiple triggers (double-click, key hold, space+click)
+    if (isExitingRef.current) return
+    isExitingRef.current = true
     setIsExiting(true)
     setTimeout(onEnter, 600)
-  }
+  }, [onEnter])
 
-  // Keyboard accessibility
+  // Keyboard accessibility — only Enter key on window to avoid
+  // double-triggering with native button activation on Space
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
-      if (e.key === 'Enter' || e.key === ' ') {
+      if (e.key === 'Enter') {
         e.preventDefault()
         handleEnter()
       }
     }
     window.addEventListener('keydown', handleKeyPress)
     return () => window.removeEventListener('keydown', handleKeyPress)
-  }, [])
+  }, [handleEnter])
 
   return (
     <div
