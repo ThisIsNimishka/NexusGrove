@@ -284,7 +284,7 @@ export function ChatView() {
       </ScrollArea>
 
       {/* Input */}
-      <div className="p-6 border-t border-border bg-background/80 backdrop-blur-xl">
+      <div className="p-4 border-t border-border bg-background/80 backdrop-blur-xl">
         <div className="flex gap-3 items-end">
           <div
             className={cn(
