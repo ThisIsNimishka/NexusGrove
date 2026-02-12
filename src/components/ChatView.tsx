@@ -230,9 +230,10 @@ export function ChatView() {
       <header className="px-6 py-4 border-b border-border bg-background/80 backdrop-blur-xl flex items-center justify-between">
         <input
           type="text"
+          placeholder="Untitled Chat"
           value={currentChat?.title ?? 'New Conversation'}
           onChange={(e) => currentChatId && updateChatTitle(currentChatId, e.target.value)}
-          className="bg-transparent border-none text-base font-display font-semibold focus:outline-none focus:ring-2 focus:ring-primary/30 rounded-lg px-2 py-1 hover:bg-card transition-colors"
+          className="bg-transparent border border-transparent text-base font-display font-semibold focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 hover:border-border/50 rounded-lg px-3 py-1.5 transition-colors cursor-text"
         />
         <div className="flex items-center gap-2">
           <Button variant="outline" size="icon" onClick={handleExport} title="Export Chat">
