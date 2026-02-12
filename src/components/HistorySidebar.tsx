@@ -66,7 +66,7 @@ export function HistorySidebar() {
           <Boxes className="w-4 h-4" />
           Models
         </h3>
-        <div className="max-h-[380px] overflow-y-auto models-scroll">
+        <div className="max-h-[40vh] overflow-y-auto models-scroll">
           <div className="space-y-1.5">
             {isLoading ? (
               <ModelCardSkeleton />
