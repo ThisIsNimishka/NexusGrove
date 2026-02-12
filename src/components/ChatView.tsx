@@ -205,13 +205,10 @@ export function ChatView() {
     }
   }, [])
 
-  const handleQuickPrompt = useCallback((text: string) => {
+  const handleQuickPrompt = (text: string) => {
     setInput(text)
-    // Auto-submit the prompt after setting input
-    setTimeout(() => {
-      handleSend()
-    }, 0)
-  }, [handleSend])
+    textareaRef.current?.focus()
+  }
 
   const handleExport = () => {
     if (currentChatId) {
