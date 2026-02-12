@@ -13,6 +13,8 @@ function App() {
     // Show splash on first visit of session
     return !sessionStorage.getItem('splashShown')
   })
+  const [showHistorySidebar, setShowHistorySidebar] = useState(false)
+  const [showSettingsSidebar, setShowSettingsSidebar] = useState(false)
 
   const loadChats = useChatStore((s) => s.loadChats)
   const loadModels = useModelStore((s) => s.loadModels)
@@ -41,9 +43,43 @@ function App() {
     <ToastProvider>
       <div className="fixed inset-0 overflow-hidden bg-gradient-animated">
         <div className="relative z-10 h-full flex">
-          <HistorySidebar />
-          <ChatView />
-          <SettingsSidebar />
+          {/* History Sidebar - hidden on mobile unless toggled */}
+          <div
+            className={`${showHistorySidebar ? 'translate-x-0' : '-translate-x-full'
+              } md:translate-x-0 fixed md:relative z-30 transition-transform duration-300 ease-in-out`}
+          >
+            <HistorySidebar />
+          </div>
+
+          {/* Mobile overlay backdrop */}
+          {showHistorySidebar && (
+            <div
+              className="md:hidden fixed inset-0 bg-black/50 z-20"
+              onClick={() => setShowHistorySidebar(false)}
+            />
+          )}
+
+          {/* Chat View - always visible, takes full width on mobile */}
+          <ChatView
+            onToggleHistory={() => setShowHistorySidebar(!showHistorySidebar)}
+            onToggleSettings={() => setShowSettingsSidebar(!showSettingsSidebar)}
+          />
+
+          {/* Mobile overlay backdrop for settings */}
+          {showSettingsSidebar && (
+            <div
+              className="md:hidden fixed inset-0 bg-black/50 z-20"
+              onClick={() => setShowSettingsSidebar(false)}
+            />
+          )}
+
+          {/* Settings Sidebar - hidden on mobile unless toggled */}
+          <div
+            className={`${showSettingsSidebar ? 'translate-x-0' : 'translate-x-full'
+              } md:translate-x-0 fixed md:relative right-0 z-30 transition-transform duration-300 ease-in-out`}
+          >
+            <SettingsSidebar />
+          </div>
         </div>
       </div>
     </ToastProvider>

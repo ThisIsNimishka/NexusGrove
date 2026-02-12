@@ -12,6 +12,8 @@ import {
   Building2,
   FlaskConical,
   X,
+  Menu,
+  Settings,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
@@ -31,7 +33,12 @@ const QUICK_PROMPTS = [
   { icon: Lightbulb, text: 'Help me brainstorm creative startup ideas for 2025' },
 ]
 
-export function ChatView() {
+interface ChatViewProps {
+  onToggleHistory: () => void
+  onToggleSettings: () => void
+}
+
+export function ChatView({ onToggleHistory, onToggleSettings }: ChatViewProps) {
   const [input, setInput] = useState('')
   const [currentImage, setCurrentImage] = useState<string | null>(null)
   const [imageName, setImageName] = useState('')
@@ -227,19 +234,45 @@ export function ChatView() {
   return (
     <main className="flex-1 flex flex-col min-w-0">
       {/* Header */}
-      <header className="px-6 py-4 border-b border-border bg-background/80 backdrop-blur-xl flex items-center justify-between">
+      <header className="px-4 md:px-6 py-4 border-b border-border bg-background/80 backdrop-blur-xl flex items-center justify-between gap-2 md:gap-3">
+        {/* Mobile menu button - History */}
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={onToggleHistory}
+          className="md:hidden shrink-0"
+          title="Toggle History"
+        >
+          <Menu className="w-4 h-4" />
+        </Button>
+
+        {/* Chat title */}
         <input
           type="text"
           value={currentChat?.title ?? 'New Conversation'}
           onChange={(e) => currentChatId && updateChatTitle(currentChatId, e.target.value)}
-          className="bg-transparent border-none text-base font-display font-semibold focus:outline-none focus:ring-2 focus:ring-primary/30 rounded-lg px-2 py-1 hover:bg-card transition-colors"
+          className="bg-transparent border-none text-sm md:text-base font-display font-semibold focus:outline-none focus:ring-2 focus:ring-primary/30 rounded-lg px-2 py-1 hover:bg-card transition-colors flex-1 min-w-0"
         />
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="icon" onClick={handleExport} title="Export Chat">
+
+        {/* Action buttons */}
+        <div className="flex items-center gap-2 shrink-0">
+          {/* Desktop buttons */}
+          <Button variant="outline" size="icon" onClick={handleExport} title="Export Chat" className="hidden md:flex">
             <Download className="w-4 h-4" />
           </Button>
-          <Button variant="outline" size="icon" onClick={handleRefreshModels} title="Refresh Models">
+          <Button variant="outline" size="icon" onClick={handleRefreshModels} title="Refresh Models" className="hidden md:flex">
             <RefreshCw className="w-4 h-4" />
+          </Button>
+
+          {/* Mobile settings button */}
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={onToggleSettings}
+            className="md:hidden"
+            title="Toggle Settings"
+          >
+            <Settings className="w-4 h-4" />
           </Button>
         </div>
       </header>
