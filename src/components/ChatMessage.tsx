@@ -21,6 +21,8 @@ export const ChatMessage = memo(function ChatMessage({
     if (!contentRef.current) return
 
     const copyButtons = contentRef.current.querySelectorAll('.code-copy-btn')
+    const handlers = new Map<Element, () => Promise<void>>()
+
     copyButtons.forEach((btn) => {
       const handleClick = async () => {
         const codeBlock = btn.closest('.code-block-wrapper')?.querySelector('code')
@@ -34,8 +36,16 @@ export const ChatMessage = memo(function ChatMessage({
           }, 2000)
         }
       }
+      handlers.set(btn, handleClick)
       btn.addEventListener('click', handleClick)
     })
+
+    // Cleanup: remove all event listeners
+    return () => {
+      handlers.forEach((handler, btn) => {
+        btn.removeEventListener('click', handler)
+      })
+    }
   }, [content.html])
 
   return (
