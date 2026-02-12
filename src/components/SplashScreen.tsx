@@ -45,10 +45,7 @@ export function SplashScreen({ onEnter }: SplashScreenProps) {
         <div className="backdrop-blur-2xl bg-card/50 border border-border/50 rounded-2xl sm:rounded-3xl shadow-2xl p-6 sm:p-8 md:p-10 lg:p-16 min-h-[85vh] flex flex-col">
 
           {/* Top Bar */}
-          <div className="flex items-center justify-between mb-auto">
-            <div className="text-muted-foreground font-medium text-xs sm:text-sm">
-              Press Enter to continue
-            </div>
+          <div className="flex items-center justify-end mb-auto">
             <span className="font-semibold text-xs sm:text-sm md:text-base text-gradient">
               Intel MMET-Gaming & AI
             </span>
