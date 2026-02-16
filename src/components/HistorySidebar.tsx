@@ -120,17 +120,24 @@ export function HistorySidebar() {
                 </h4>
                 <div className="space-y-1">
                   {groupChats.map((chat) => (
-                    <button
+                    <div
                       key={chat.id}
                       onClick={() => selectChat(chat.id)}
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          selectChat(chat.id)
+                        }
+                      }}
                       className={cn(
-                        'w-full flex items-center gap-2.5 p-2.5 rounded-lg transition-all group text-left',
+                        'relative w-full flex items-center gap-2.5 p-2.5 rounded-lg transition-all group text-left cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-primary',
                         'hover:bg-card-foreground/5',
                         currentChatId === chat.id && 'bg-primary/15 border border-primary/30'
                       )}
                     >
                       <MessageSquare className="w-4 h-4 text-muted-foreground shrink-0" />
-                      <div className="flex-1 min-w-0 overflow-hidden">
+                      <div className="flex-1 min-w-0 overflow-hidden pr-8">
                         <p className="text-sm font-medium truncate">{chat.title}</p>
                         <p className="text-xs text-muted-foreground truncate">
                           {chat.messages.length > 0
@@ -140,11 +147,12 @@ export function HistorySidebar() {
                       </div>
                       <button
                         onClick={(e) => handleDeleteChat(chat.id, e)}
-                        className="opacity-0 group-hover:opacity-100 p-1.5 rounded hover:bg-destructive/10 hover:text-destructive transition-all shrink-0"
+                        className="absolute right-2 top-1/2 -translate-y-1/2 z-10 p-1.5 rounded-lg bg-background/80 hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-all opacity-0 group-hover:opacity-100 focus:opacity-100"
+                        title="Delete chat"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
-                    </button>
+                    </div>
                   ))}
                 </div>
               </div>
