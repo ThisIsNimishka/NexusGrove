@@ -131,13 +131,13 @@ export function HistorySidebar() {
                         }
                       }}
                       className={cn(
-                        'relative w-full flex items-center gap-2.5 p-2.5 rounded-lg transition-all group text-left cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-primary',
+                        'w-full flex items-center gap-2 p-2.5 rounded-lg transition-all group text-left cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-primary',
                         'hover:bg-card-foreground/5',
                         currentChatId === chat.id && 'bg-primary/15 border border-primary/30'
                       )}
                     >
                       <MessageSquare className="w-4 h-4 text-muted-foreground shrink-0" />
-                      <div className="flex-1 min-w-0 overflow-hidden pr-8">
+                      <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium truncate">{chat.title}</p>
                         <p className="text-xs text-muted-foreground truncate">
                           {chat.messages.length > 0
@@ -147,7 +147,7 @@ export function HistorySidebar() {
                       </div>
                       <button
                         onClick={(e) => handleDeleteChat(chat.id, e)}
-                        className="absolute right-2 top-1/2 -translate-y-1/2 z-10 p-1.5 rounded-lg bg-background/80 hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-all opacity-0 group-hover:opacity-100 focus:opacity-100"
+                        className="shrink-0 p-1.5 rounded-md text-muted-foreground/40 hover:text-destructive hover:bg-destructive/10 transition-colors"
                         title="Delete chat"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
