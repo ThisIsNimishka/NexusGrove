@@ -137,7 +137,7 @@ export function HistorySidebar() {
                       )}
                     >
                       <MessageSquare className="w-4 h-4 text-muted-foreground shrink-0" />
-                      <div className="flex-1 min-w-0">
+                      <div style={{ flex: '1 1 0%', minWidth: 0, overflow: 'hidden' }}>
                         <p className="text-sm font-medium truncate">{chat.title}</p>
                         <p className="text-xs text-muted-foreground truncate">
                           {chat.messages.length > 0
@@ -147,10 +147,32 @@ export function HistorySidebar() {
                       </div>
                       <button
                         onClick={(e) => handleDeleteChat(chat.id, e)}
-                        className="shrink-0 p-1.5 rounded-md text-muted-foreground/40 hover:text-destructive hover:bg-destructive/10 transition-colors"
                         title="Delete chat"
+                        style={{
+                          flexShrink: 0,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          width: '28px',
+                          height: '28px',
+                          borderRadius: '6px',
+                          border: '1px solid rgba(255,255,255,0.15)',
+                          background: 'transparent',
+                          cursor: 'pointer',
+                          color: 'rgba(255,255,255,0.5)',
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.background = 'rgba(239,68,68,0.15)'
+                          e.currentTarget.style.color = '#ef4444'
+                          e.currentTarget.style.borderColor = 'rgba(239,68,68,0.4)'
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background = 'transparent'
+                          e.currentTarget.style.color = 'rgba(255,255,255,0.5)'
+                          e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)'
+                        }}
                       >
-                        <Trash2 className="w-3.5 h-3.5" />
+                        <Trash2 style={{ width: '14px', height: '14px' }} />
                       </button>
                     </div>
                   ))}
