@@ -186,7 +186,7 @@ export function SettingsSidebar() {
               'px-4 py-3 rounded-2xl border flex items-center gap-3 text-xs transition-all duration-300',
               'bg-secondary/40 backdrop-blur-sm',
               isConnected
-                ? 'border-accent-cyan/20 shadow-[0_0_15px_-5px_rgba(34,197,94,0.1)]'
+                ? 'border-accent-cyan/20 shadow-accent-cyan/10'
                 : 'border-destructive/20'
             )}
           >

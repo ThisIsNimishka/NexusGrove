@@ -18,7 +18,8 @@
     --muted-foreground: 0 0% 42%;
     --accent: 260 100% 60%;
     --accent-foreground: 0 0% 100%;
-    --accent-cyan: 160 75% 53%;
+    --accent-cyan: 142 75% 48%;
+    /* Emerald for Default */
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
     --border: 260 20% 15%;
@@ -41,7 +42,7 @@
     --muted-foreground: 0 0% 42%;
     --accent: 260 100% 60%;
     --accent-foreground: 0 0% 100%;
-    --accent-cyan: 160 75% 53%;
+    --accent-cyan: 142 75% 48%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
     --border: 260 20% 15%;
@@ -63,7 +64,8 @@
     --muted-foreground: 215 30% 50%;
     --accent: 215 100% 65%;
     --accent-foreground: 0 0% 100%;
-    --accent-cyan: 165 100% 42%;
+    --accent-cyan: 195 100% 50%;
+    /* Sky Blue for Midnight */
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
     --border: 215 40% 18%;
@@ -85,7 +87,8 @@
     --muted-foreground: 280 20% 55%;
     --accent: 320 100% 50%;
     --accent-foreground: 0 0% 100%;
-    --accent-cyan: 170 100% 50%;
+    --accent-cyan: 320 100% 60%;
+    /* Neon Pink for Cyberpunk */
     --destructive: 340 100% 50%;
     --destructive-foreground: 0 0% 100%;
     --border: 280 50% 18%;
@@ -95,24 +98,26 @@
 
   /* Forest Theme */
   [data-theme="forest"] {
-    --background: 140 25% 5%;
-    --foreground: 140 20% 95%;
-    --card: 140 30% 6%;
-    --card-foreground: 140 20% 95%;
-    --primary: 140 70% 45%;
+    --background: 142 20% 4%;
+    --foreground: 142 10% 98%;
+    --card: 142 25% 6%;
+    --card-foreground: 142 10% 98%;
+    --primary: 142 76% 36%;
+    /* Deep Forest */
     --primary-foreground: 0 0% 100%;
-    --secondary: 140 30% 4%;
-    --secondary-foreground: 140 20% 95%;
-    --muted: 140 20% 15%;
-    --muted-foreground: 140 20% 50%;
-    --accent: 140 70% 45%;
+    --secondary: 142 25% 3%;
+    --secondary-foreground: 142 10% 98%;
+    --muted: 142 20% 12%;
+    --muted-foreground: 142 10% 45%;
+    --accent: 142 76% 36%;
     --accent-foreground: 0 0% 100%;
-    --accent-cyan: 160 84% 39%;
+    --accent-cyan: 142 100% 45%;
+    /* Vibrant Green for Forest */
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --border: 140 30% 12%;
-    --input: 140 30% 6%;
-    --ring: 140 70% 45%;
+    --border: 142 20% 14%;
+    --input: 142 25% 6%;
+    --ring: 142 76% 36%;
   }
 
   * {

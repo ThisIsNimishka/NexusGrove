@@ -79,33 +79,33 @@ function ToastItem({ toast, onClose }: { toast: Toast; onClose: () => void }) {
     <div
       className={cn(
         'relative group pointer-events-auto overflow-hidden',
-        'flex items-center gap-4 px-6 py-4 rounded-2xl border bg-card/80 backdrop-blur-xl shadow-2xl transition-all duration-300',
-        'min-w-[320px] max-w-full',
+        'flex items-center gap-4 px-6 py-4 rounded-2xl border bg-card/90 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] transition-butter duration-butter',
+        'min-w-[340px] max-w-full',
         isClosing ? 'animate-toast-out' : 'animate-toast-in',
-        toast.type === 'success' && 'border-accent-cyan/40 shadow-accent-cyan/10',
-        toast.type === 'error' && 'border-destructive/40 shadow-destructive/10',
-        toast.type === 'info' && 'border-primary/40 shadow-primary/10'
+        toast.type === 'success' && 'border-accent-cyan/30 shadow-accent-cyan/5',
+        toast.type === 'error' && 'border-destructive/30 shadow-destructive/5',
+        toast.type === 'info' && 'border-primary/30 shadow-primary/5'
       )}
     >
       {/* Background Glow */}
       <div className={cn(
-        'absolute inset-0 opacity-5 px-6 pointer-events-none',
+        'absolute inset-0 opacity-[0.03] px-6 pointer-events-none',
         toast.type === 'success' && 'bg-accent-cyan',
         toast.type === 'error' && 'bg-destructive',
         toast.type === 'info' && 'bg-primary'
       )} />
 
       <div className={cn(
-        'flex items-center justify-center w-10 h-10 rounded-xl shrink-0',
-        toast.type === 'success' && 'bg-accent-cyan/15 text-accent-cyan',
-        toast.type === 'error' && 'bg-destructive/15 text-destructive',
-        toast.type === 'info' && 'bg-primary/15 text-primary'
+        'flex items-center justify-center w-11 h-11 rounded-2xl shrink-0 transition-transform duration-500 group-hover:scale-110',
+        toast.type === 'success' && 'bg-accent-cyan/10 text-accent-cyan',
+        toast.type === 'error' && 'bg-destructive/10 text-destructive',
+        toast.type === 'info' && 'bg-primary/10 text-primary'
       )}>
         <Icon className="w-5 h-5" />
       </div>
 
-      <div className="flex-1 min-w-0 pr-2">
-        <p className="text-sm font-bold text-foreground tracking-tight line-clamp-2">
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-bold text-foreground tracking-tight leading-snug">
           {toast.message}
         </p>
       </div>
@@ -115,19 +115,19 @@ function ToastItem({ toast, onClose }: { toast: Toast; onClose: () => void }) {
           setIsClosing(true)
           setTimeout(onClose, 300)
         }}
-        className="shrink-0 p-1.5 rounded-lg hover:bg-white/5 text-muted-foreground hover:text-foreground transition-all active:scale-90"
+        className="shrink-0 p-2 rounded-xl hover:bg-white/10 text-muted-foreground hover:text-foreground transition-butter active:scale-95"
       >
         <X className="w-4 h-4" />
       </button>
 
-      {/* Progress Bar Loader */}
-      <div className="absolute bottom-0 left-0 h-1 bg-white/5 w-full overflow-hidden">
+      {/* Progress Bar Loader - Thicker and more visible */}
+      <div className="absolute bottom-0 left-0 h-[2px] bg-white/5 w-full overflow-hidden">
         <div
           className={cn(
             "h-full transition-all duration-[3200ms] ease-linear",
-            toast.type === 'success' && 'bg-accent-cyan',
-            toast.type === 'error' && 'bg-destructive',
-            toast.type === 'info' && 'bg-primary'
+            toast.type === 'success' && 'bg-accent-cyan shadow-[0_0_8px_hsl(var(--accent-cyan))]',
+            toast.type === 'error' && 'bg-destructive shadow-[0_0_8px_hsl(var(--destructive))]',
+            toast.type === 'info' && 'bg-primary shadow-[0_0_8px_hsl(var(--primary))]'
           )}
           style={{ width: isClosing ? '0%' : '100%' }}
         />
