@@ -12,6 +12,7 @@ import {
   Building2,
   FlaskConical,
   X,
+  Trash2,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
@@ -222,19 +223,34 @@ export function ChatView() {
     await loadModels()
   }
 
+  const handleDeleteCurrentChat = async () => {
+    if (!currentChatId) return
+    if (window.confirm('Are you sure you want to delete this conversation?')) {
+      await useChatStore.getState().deleteChat(currentChatId)
+      addToast('Chat deleted', 'success')
+    }
+  }
+
   const canUploadImage = selectedModelId && isVisionModel(selectedModelId)
 
   return (
     <main className="flex-1 flex flex-col min-w-0">
       {/* Header */}
       <header className="px-6 py-4 border-b border-border bg-background/80 backdrop-blur-xl flex items-center justify-between">
-        <input
-          type="text"
-          placeholder="Untitled Chat"
-          value={currentChat?.title ?? 'New Conversation'}
-          onChange={(e) => currentChatId && updateChatTitle(currentChatId, e.target.value)}
-          className="bg-transparent border border-transparent text-base font-display font-semibold focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 hover:border-border/50 rounded-lg px-3 py-1.5 transition-colors cursor-text"
-        />
+        <div className="flex items-center gap-3">
+          <input
+            type="text"
+            placeholder="Untitled Chat"
+            value={currentChat?.title ?? 'New Conversation'}
+            onChange={(e) => currentChatId && updateChatTitle(currentChatId, e.target.value)}
+            className="bg-transparent border border-transparent text-base font-display font-semibold focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 hover:border-border/50 rounded-lg px-3 py-1.5 transition-colors cursor-text"
+          />
+          {messages.length > 0 && (
+            <div className="px-2 py-0.5 rounded-full bg-secondary text-[10px] font-medium text-muted-foreground border border-border/50">
+              {messages.length} {messages.length === 1 ? 'message' : 'messages'}
+            </div>
+          )}
+        </div>
         <div className="flex items-center gap-2">
           <Button variant="outline" size="icon" onClick={handleExport} title="Export Chat">
             <Download className="w-4 h-4" />
@@ -242,12 +258,21 @@ export function ChatView() {
           <Button variant="outline" size="icon" onClick={handleRefreshModels} title="Refresh Models">
             <RefreshCw className="w-4 h-4" />
           </Button>
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={handleDeleteCurrentChat}
+            className="hover:bg-destructive/10 hover:text-destructive hover:border-destructive/30"
+            title="Delete Chat"
+          >
+            <Trash2 className="w-4 h-4" />
+          </Button>
         </div>
       </header>
 
       {/* Messages */}
       <ScrollArea className="flex-1" viewportRef={scrollViewportRef}>
-        <div className="p-6 space-y-5">
+        <div className="max-w-5xl mx-auto p-6 space-y-5">
           {isChatsLoading ? (
             <ChatLoadingSkeleton />
           ) : messages.length === 0 ? (
@@ -265,6 +290,7 @@ export function ChatView() {
                     content: streamingContent,
                     timestamp: Date.now(),
                   }}
+                  isStreaming
                 />
               )}
               {isGenerating && !streamingContent && (
@@ -407,7 +433,7 @@ function WelcomeState({ onPromptClick }: { onPromptClick: (text: string) => void
           <button
             key={text}
             onClick={() => onPromptClick(text)}
-            className="p-4 rounded-xl bg-card border border-border hover:border-primary hover:-translate-y-0.5 hover:shadow-lg hover:shadow-primary/10 transition-all text-left group"
+            className="p-4 rounded-xl bg-card border border-border hover:border-primary hover:-translate-y-0.5 hover:scale-[1.02] hover:shadow-lg hover:shadow-primary/10 transition-all text-left group"
           >
             <Icon className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors mb-2" />
             <p className="text-sm text-muted-foreground group-hover:text-foreground transition-colors line-clamp-2">

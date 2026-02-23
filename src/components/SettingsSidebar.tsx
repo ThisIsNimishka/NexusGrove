@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Palette, Sparkles, SlidersHorizontal, Terminal, Network, Unplug, RefreshCw } from 'lucide-react'
+import { Palette, Sparkles, SlidersHorizontal, Terminal, Network, Unplug, RefreshCw, Globe, Settings2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 import { Slider } from '@/components/ui/slider'
@@ -38,10 +38,14 @@ export function SettingsSidebar() {
     setSystemPrompt,
     applyPreset,
     resetParameters,
-
+    apiUrl,
+    setApiUrl,
   } = useSettingsStore()
   const { isConnected, loadModels } = useModelStore()
   const { addToast } = useToast()
+
+  const [tempApiUrl, setTempApiUrl] = useState(apiUrl || '')
+  const [isEditingApi, setIsEditingApi] = useState(false)
 
   const handleRefresh = async () => {
     setIsRefreshing(true)
@@ -178,6 +182,79 @@ export function SettingsSidebar() {
               className="min-h-[100px]"
             />
           </section>
+
+          {/* API Configuration */}
+          <section className="pt-4 border-t border-border/50">
+            <SectionHeader icon={Globe} title="API Configuration" />
+            <div className="space-y-3">
+              <div className="bg-card border border-border rounded-xl p-3 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">
+                    LM Studio URL
+                  </span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-6 px-2 text-[10px]"
+                    onClick={() => {
+                      if (isEditingApi) {
+                        setApiUrl(tempApiUrl || null)
+                        setIsEditingApi(false)
+                        addToast('API URL Updated', 'success')
+                        loadModels()
+                      } else {
+                        setIsEditingApi(true)
+                      }
+                    }}
+                  >
+                    {isEditingApi ? 'Save' : 'Edit'}
+                  </Button>
+                </div>
+
+                {isEditingApi ? (
+                  <input
+                    type="text"
+                    value={tempApiUrl}
+                    onChange={(e) => setTempApiUrl(e.target.value)}
+                    placeholder="http://localhost:1234"
+                    className="w-full bg-secondary/50 border border-border rounded px-2 py-1 text-xs font-mono focus:outline-none focus:ring-1 focus:ring-primary"
+                  />
+                ) : (
+                  <p className="text-xs font-mono text-primary truncate">
+                    {apiUrl || 'Auto-detecting...'}
+                  </p>
+                )}
+
+                {!apiUrl && !isEditingApi && (
+                  <p className="text-[10px] text-muted-foreground leading-tight italic">
+                    Currently utilizing auto-detection based on your connection address.
+                  </p>
+                )}
+              </div>
+
+              {apiUrl && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full text-[10px] h-7"
+                  onClick={() => {
+                    setApiUrl(null)
+                    setTempApiUrl('')
+                    addToast('Reset to auto-detect', 'info')
+                    loadModels()
+                  }}
+                >
+                  Reset to Auto-detect
+                </Button>
+              )}
+            </div>
+          </section>
+
+          {/* Version Info */}
+          <div className="pt-4 flex items-center justify-center gap-2 opacity-30">
+            <Settings2 className="w-3 h-3" />
+            <span className="text-[10px] font-mono tracking-widest uppercase">v2.1.0-updated</span>
+          </div>
         </div>
       </ScrollArea>
 

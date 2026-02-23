@@ -1,6 +1,6 @@
-import { memo, useEffect, useRef } from 'react'
-import { User, Bot, Zap, Clock, Hash, Square } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { memo, useEffect, useRef, useState } from 'react'
+import { User, Bot, Zap, Clock, Hash, Square, Copy, Check } from 'lucide-react'
+import { cn, formatRelativeTime } from '@/lib/utils'
 import type { Message, MessageContent, StreamMetrics } from '@/types'
 
 interface ChatMessageProps {
@@ -12,6 +12,7 @@ export const ChatMessage = memo(function ChatMessage({
   message,
   isStreaming = false,
 }: ChatMessageProps) {
+  const [copied, setCopied] = useState(false)
   const isUser = message.role === 'user'
   const content = formatContent(message.content)
   const contentRef = useRef<HTMLDivElement>(null)
@@ -48,39 +49,67 @@ export const ChatMessage = memo(function ChatMessage({
     }
   }, [content.html])
 
+  const handleCopyFull = async () => {
+    const plainText = typeof message.content === 'string'
+      ? message.content
+      : message.content.filter(p => p.type === 'text').map(p => p.type === 'text' ? p.text : '').join('\n')
+
+    await navigator.clipboard.writeText(plainText)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
   return (
     <div
       className={cn(
-        'flex gap-3.5 max-w-[80%] animate-fade-in',
+        'flex gap-3.5 max-w-[95%] animate-message-enter',
         isUser && 'self-end flex-row-reverse'
       )}
     >
-      {/* Avatar */}
-      <div
-        className={cn(
-          'w-8 h-8 rounded-lg flex items-center justify-center shrink-0',
-          isUser
-            ? 'bg-card border border-border'
-            : 'bg-gradient-to-br from-primary to-accent shadow-[0_0_20px_hsl(var(--primary)/0.3)]'
-        )}
-      >
-        {isUser ? (
-          <User className="w-4 h-4 text-muted-foreground" />
-        ) : (
-          <Bot className="w-4 h-4 text-primary-foreground" />
-        )}
+      {/* Avatar & Timestamp */}
+      <div className="flex flex-col items-center gap-1.5 shrink-0">
+        <div
+          className={cn(
+            'w-8 h-8 rounded-lg flex items-center justify-center',
+            isUser
+              ? 'bg-card border border-border'
+              : 'bg-gradient-to-br from-primary to-accent shadow-[0_0_20px_hsl(var(--primary)/0.3)]'
+          )}
+        >
+          {isUser ? (
+            <User className="w-4 h-4 text-muted-foreground" />
+          ) : (
+            <Bot className="w-4 h-4 text-primary-foreground" />
+          )}
+        </div>
+        <span className="text-[10px] text-muted-foreground/60 font-medium whitespace-nowrap">
+          {formatRelativeTime(message.timestamp)}
+        </span>
       </div>
 
       {/* Content */}
       <div
         className={cn(
-          'rounded-xl px-4 py-3 text-sm leading-relaxed transition-colors',
+          'group/msg relative rounded-xl px-4 py-3 text-sm leading-relaxed transition-colors',
           isUser
             ? 'bg-primary/10 border border-primary/30'
             : 'bg-card border border-border'
         )}
       >
-        {isStreaming ? (
+        {!isUser && !isStreaming && content.html && (
+          <button
+            onClick={handleCopyFull}
+            className="absolute top-2 right-2 p-1.5 rounded-lg bg-background/50 border border-border opacity-0 group-hover/msg:opacity-100 transition-opacity hover:bg-background z-10"
+            title="Copy response"
+          >
+            {copied ? (
+              <Check className="w-3.5 h-3.5 text-accent-cyan" />
+            ) : (
+              <Copy className="w-3.5 h-3.5 text-muted-foreground" />
+            )}
+          </button>
+        )}
+        {isStreaming && !content.html ? (
           <TypingIndicator />
         ) : (
           <>
@@ -89,6 +118,9 @@ export const ChatMessage = memo(function ChatMessage({
               className="prose prose-invert prose-sm max-w-none"
               dangerouslySetInnerHTML={{ __html: content.html }}
             />
+            {isStreaming && (
+              <span className="inline-block w-[2px] h-[1em] bg-primary ml-0.5 align-middle animate-typing-cursor" />
+            )}
             {content.images.map((img, i) => (
               <img
                 key={i}

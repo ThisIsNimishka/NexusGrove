@@ -132,7 +132,7 @@ export function HistorySidebar() {
                       }}
                       className={cn(
                         'w-full flex items-center gap-2 p-2.5 rounded-lg transition-all group text-left cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-primary',
-                        'hover:bg-card-foreground/5',
+                        'hover:bg-card-foreground/5 hover:translate-x-0.5',
                         currentChatId === chat.id && 'bg-primary/15 border border-primary/30'
                       )}
                     >
@@ -146,33 +146,16 @@ export function HistorySidebar() {
                         </p>
                       </div>
                       <button
-                        onClick={(e) => handleDeleteChat(chat.id, e)}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          if (window.confirm('Are you sure you want to delete this conversation?')) {
+                            handleDeleteChat(chat.id, e)
+                          }
+                        }}
+                        className="shrink-0 p-1.5 rounded-md text-muted-foreground/50 hover:text-destructive hover:bg-destructive/10 transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100 pointer-events-none group-hover:pointer-events-auto focus:pointer-events-auto"
                         title="Delete chat"
-                        style={{
-                          flexShrink: 0,
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          width: '28px',
-                          height: '28px',
-                          borderRadius: '6px',
-                          border: '1px solid rgba(255,255,255,0.15)',
-                          background: 'transparent',
-                          cursor: 'pointer',
-                          color: 'rgba(255,255,255,0.5)',
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.background = 'rgba(239,68,68,0.15)'
-                          e.currentTarget.style.color = '#ef4444'
-                          e.currentTarget.style.borderColor = 'rgba(239,68,68,0.4)'
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.background = 'transparent'
-                          e.currentTarget.style.color = 'rgba(255,255,255,0.5)'
-                          e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)'
-                        }}
                       >
-                        <Trash2 style={{ width: '14px', height: '14px' }} />
+                        <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
                   ))}

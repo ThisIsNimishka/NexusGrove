@@ -198,15 +198,30 @@
 }
 
 @keyframes gradient-move {
-  0%, 100% { transform: translate(0, 0) rotate(0deg); }
-  33% { transform: translate(2%, 2%) rotate(1deg); }
-  66% { transform: translate(-1%, 1%) rotate(-1deg); }
+
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+
+  33% {
+    transform: translate(2%, 2%) rotate(1deg);
+  }
+
+  66% {
+    transform: translate(-1%, 1%) rotate(-1deg);
+  }
 }
 
 /* Animated gradient flow for buttons */
 @keyframes gradient-flow {
-  0% { background-position: 0% 50%; }
-  100% { background-position: -200% 50%; }
+  0% {
+    background-position: 0% 50%;
+  }
+
+  100% {
+    background-position: -200% 50%;
+  }
 }
 
 .animate-gradient-flow {
@@ -215,18 +230,43 @@
 
 /* Splash screen background animation */
 @keyframes splash-gradient {
-  0% { background-position: 0% 50%; }
-  25% { background-position: 50% 100%; }
-  50% { background-position: 100% 50%; }
-  75% { background-position: 50% 0%; }
-  100% { background-position: 0% 50%; }
+  0% {
+    background-position: 0% 50%;
+  }
+
+  25% {
+    background-position: 50% 100%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  75% {
+    background-position: 50% 0%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 /* Neural path flow animation */
 @keyframes flow-path {
-  0% { stroke-dasharray: 0 1000; stroke-dashoffset: 0; }
-  50% { stroke-dasharray: 500 1000; stroke-dashoffset: -250; }
-  100% { stroke-dasharray: 0 1000; stroke-dashoffset: -1000; }
+  0% {
+    stroke-dasharray: 0 1000;
+    stroke-dashoffset: 0;
+  }
+
+  50% {
+    stroke-dasharray: 500 1000;
+    stroke-dashoffset: -250;
+  }
+
+  100% {
+    stroke-dasharray: 0 1000;
+    stroke-dashoffset: -1000;
+  }
 }
 
 .animate-flow-path {
@@ -235,18 +275,23 @@
 
 /* Floating particle animation */
 @keyframes float-particle {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translate(0, 0) scale(1);
     opacity: 0.6;
   }
+
   25% {
     transform: translate(10px, -15px) scale(1.2);
     opacity: 1;
   }
+
   50% {
     transform: translate(-5px, -25px) scale(0.8);
     opacity: 0.8;
   }
+
   75% {
     transform: translate(15px, -10px) scale(1.1);
     opacity: 0.9;
@@ -263,6 +308,7 @@
     opacity: 0;
     transform: translateX(-60px);
   }
+
   100% {
     opacity: 1;
     transform: translateX(0);
@@ -279,6 +325,7 @@
     opacity: 0;
     transform: translateX(60px);
   }
+
   100% {
     opacity: 1;
     transform: translateX(0);
@@ -294,9 +341,11 @@
   0% {
     opacity: 1;
   }
+
   50% {
     opacity: 1;
   }
+
   100% {
     opacity: 0;
   }
@@ -321,6 +370,7 @@
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -333,9 +383,12 @@
 
 /* Pulse glow animation - for logo shimmer */
 @keyframes pulse-glow {
-  0%, 100% {
+
+  0%,
+  100% {
     filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.3));
   }
+
   50% {
     filter: drop-shadow(0 0 24px rgba(255, 255, 255, 0.6)) drop-shadow(0 0 36px rgba(167, 139, 250, 0.4));
   }
@@ -343,4 +396,38 @@
 
 .animate-pulse-glow {
   animation: pulse-glow 3s ease-in-out infinite;
+}
+
+/* Typing cursor for streaming text */
+@keyframes typing-cursor {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
+}
+
+.animate-typing-cursor {
+  animation: typing-cursor 0.8s ease-in-out infinite;
+}
+
+/* Smooth message entry animation */
+@keyframes message-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-message-enter {
+  animation: message-enter 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
