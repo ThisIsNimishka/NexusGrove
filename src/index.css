@@ -117,12 +117,20 @@
 
   * {
     @apply border-border;
+    transition: background-color 0.4s ease,
+      border-color 0.4s ease,
+      color 0.4s ease,
+      box-shadow 0.4s ease,
+      text-shadow 0.4s ease,
+      opacity 0.4s ease;
   }
 
   body {
     @apply bg-background text-foreground font-sans antialiased;
     min-height: 100vh;
     overflow-x: hidden;
+    transition: background 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+      color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   }
 }
 
