@@ -11,13 +11,7 @@ export default defineConfig({
   },
   server: {
     port: 3000,
-    strictPort: true,
-    host: '0.0.0.0',
-    cors: true,
-    allowedHosts: true,
-    hmr: {
-      clientPort: 3000,
-    },
+    host: true,
     proxy: {
       '/v1': {
         target: 'http://127.0.0.1:1234',

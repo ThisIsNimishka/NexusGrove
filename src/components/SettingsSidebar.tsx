@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Palette, Sparkles, SlidersHorizontal, Terminal, Network, Unplug, RefreshCw, Settings2 } from 'lucide-react'
+import { Palette, Sparkles, SlidersHorizontal, Terminal, Network, Unplug, RefreshCw, Settings2, Zap, Scale, Target, CodeXml } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 import { Slider } from '@/components/ui/slider'
@@ -19,11 +19,11 @@ const THEMES: { id: Theme; name: string; colors: string }[] = [
   { id: 'forest', name: 'Forest', colors: 'from-green-500 to-slate-900' },
 ]
 
-const PRESETS: { id: PresetName; name: string; icon: string; desc: string }[] = [
-  { id: 'creative', name: 'Creative', icon: '🎨', desc: 'High temperature, diverse outputs' },
-  { id: 'balanced', name: 'Balanced', icon: '⚖️', desc: 'Default settings for general use' },
-  { id: 'precise', name: 'Precise', icon: '🎯', desc: 'Low temperature, focused outputs' },
-  { id: 'coding', name: 'Coding', icon: '💻', desc: 'Optimized for code generation' },
+const PRESETS: { id: PresetName; name: string; icon: React.ElementType; desc: string }[] = [
+  { id: 'creative', name: 'Creative', icon: Zap, desc: 'High temperature, diverse outputs' },
+  { id: 'balanced', name: 'Balanced', icon: Scale, desc: 'Default settings for general use' },
+  { id: 'precise', name: 'Precise', icon: Target, desc: 'Low temperature, focused outputs' },
+  { id: 'coding', name: 'Coding', icon: CodeXml, desc: 'Optimized for code generation' },
 ]
 
 export function SettingsSidebar() {
@@ -105,7 +105,7 @@ export function SettingsSidebar() {
                   )}
                 >
                   <div className="flex items-center gap-2 text-sm font-semibold">
-                    <span>{preset.icon}</span>
+                    <preset.icon className="w-4 h-4 text-primary" />
                     {preset.name}
                   </div>
                   <p className="text-xs text-muted-foreground mt-0.5">{preset.desc}</p>
@@ -180,6 +180,48 @@ export function SettingsSidebar() {
             />
           </section>
 
+          {/* Server Status */}
+          <div
+            className={cn(
+              'px-4 py-3 rounded-2xl border flex items-center gap-3 text-xs transition-all duration-300',
+              'bg-secondary/40 backdrop-blur-sm',
+              isConnected
+                ? 'border-accent-cyan/20 shadow-[0_0_15px_-5px_rgba(34,197,94,0.1)]'
+                : 'border-destructive/20'
+            )}
+          >
+            <div className="flex items-center gap-2.5 flex-1">
+              {isConnected ? (
+                <>
+                  <div className="relative">
+                    <div className="w-2 h-2 rounded-full bg-accent-cyan shadow-[0_0_10px_hsl(var(--accent-cyan))]" />
+                    <div className="absolute inset-x-0 inset-y-0 w-2 h-2 rounded-full bg-accent-cyan animate-ping opacity-50" />
+                  </div>
+                  <Network className="w-4 h-4 text-accent-cyan/80" />
+                  <span className="font-semibold text-foreground/90">Connected to Server</span>
+                </>
+              ) : (
+                <>
+                  <div className="w-2 h-2 rounded-full bg-destructive shadow-[0_0_10px_hsl(var(--destructive))]" />
+                  <Unplug className="w-4 h-4 text-destructive/80" />
+                  <span className="font-semibold text-foreground/90">Server Offline</span>
+                </>
+              )}
+            </div>
+
+            <button
+              onClick={handleRefresh}
+              disabled={isRefreshing}
+              className="p-1.5 rounded-lg hover:bg-white/5 transition-all active:scale-90"
+              title="Refresh connection"
+            >
+              <RefreshCw className={cn(
+                "w-3.5 h-3.5 text-muted-foreground hover:text-foreground transition-all",
+                isRefreshing && "animate-spin text-primary"
+              )} />
+            </button>
+          </div>
+
           {/* API Configuration - Hidden for now
           <section className="pt-4 border-t border-border/50">
             <SectionHeader icon={Globe} title="API Configuration" />
@@ -248,6 +290,8 @@ export function SettingsSidebar() {
           </section>
           */}
 
+
+
           {/* Version Info */}
           <div className="pt-4 flex items-center justify-center gap-2 opacity-30">
             <Settings2 className="w-3 h-3" />
@@ -256,36 +300,7 @@ export function SettingsSidebar() {
         </div>
       </ScrollArea>
 
-      {/* Server Status */}
-      <div
-        className={cn(
-          'mx-5 mb-5 px-3 py-2.5 rounded-xl border flex items-center gap-2 text-xs',
-          'bg-card',
-          isConnected ? 'border-accent-cyan/30' : 'border-destructive/30'
-        )}
-      >
-        {isConnected ? (
-          <>
-            <div className="w-1.5 h-1.5 rounded-full bg-accent-cyan shadow-[0_0_8px_hsl(var(--accent-cyan))] animate-pulse" />
-            <Network className="w-3.5 h-3.5 text-accent-cyan" />
-            <span className="flex-1">Connected to Server</span>
-          </>
-        ) : (
-          <>
-            <div className="w-1.5 h-1.5 rounded-full bg-destructive" />
-            <Unplug className="w-3.5 h-3.5 text-destructive" />
-            <span className="flex-1">Server offline</span>
-          </>
-        )}
-        <button
-          onClick={handleRefresh}
-          disabled={isRefreshing}
-          className="p-1 rounded hover:bg-white/10 transition-colors"
-          title="Refresh connection"
-        >
-          <RefreshCw className={`w-3 h-3 text-muted-foreground hover:text-foreground transition-transform ${isRefreshing ? 'animate-spin' : ''}`} />
-        </button>
-      </div>
+
     </aside>
   )
 }
