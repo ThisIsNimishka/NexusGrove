@@ -58,12 +58,16 @@ export function ChatView() {
     }
   }, [messages, streamingContent])
 
-  // Auto-resize textarea
+  // Auto-resize textarea whenever input or viewport changes
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto'
+      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 200)}px`
+    }
+  }, [input])
+
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInput(e.target.value)
-    const textarea = e.target
-    textarea.style.height = 'auto'
-    textarea.style.height = Math.min(textarea.scrollHeight, 200) + 'px'
   }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -314,8 +318,9 @@ export function ChatView() {
         <div className="flex gap-3 items-end">
           <div
             className={cn(
-              'flex-1 glass-card p-4 space-y-3 transition-all',
-              'focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20'
+              'flex-1 glass-card p-4 space-y-3 transition-all duration-500 border-white/5',
+              'focus-within:border-primary/50 focus-within:ring-4 focus-within:ring-primary/10',
+              'animate-focus-shimmer'
             )}
           >
             {/* Image Preview */}
@@ -343,9 +348,9 @@ export function ChatView() {
               value={input}
               onChange={handleInputChange}
               onKeyDown={handleKeyDown}
-              placeholder="Type your message..."
+              placeholder="Message local models..."
               rows={1}
-              className="w-full bg-transparent border-none resize-none focus:outline-none text-sm leading-relaxed min-h-[24px] max-h-[200px]"
+              className="w-full bg-transparent border-none resize-none focus:outline-none text-sm leading-relaxed min-h-[24px] max-h-[200px] scrollbar-none transition-[height] duration-200"
             />
 
             <div className="flex items-center justify-between">
@@ -389,24 +394,41 @@ export function ChatView() {
           </div>
 
           {isGenerating ? (
-            <Button
-              variant="destructive"
-              size="icon"
-              className="h-11 w-11 shrink-0 !bg-red-600 hover:!bg-red-700 shadow-lg shadow-red-600/30 glass-border"
-              onClick={handleStop}
-              title="Stop generation"
-            >
-              <Square className="w-5 h-5 fill-current" />
-            </Button>
+            <div className="relative">
+              <div className="absolute -inset-1 bg-red-500/20 blur-md rounded-full animate-pulse" />
+              <Button
+                variant="destructive"
+                size="icon"
+                className="h-11 w-11 shrink-0 !bg-red-600 hover:!bg-red-700 shadow-lg shadow-red-600/30 glass-border relative z-10 group"
+                onClick={handleStop}
+                title="Stop generation"
+              >
+                <div className="absolute inset-x-0 inset-y-0 rounded-full border-2 border-white/20 animate-[spin_3s_linear_infinite]" />
+                <Square className="w-4 h-4 fill-current group-hover:scale-90 transition-transform" />
+              </Button>
+            </div>
           ) : (
-            <Button
-              size="icon"
-              className="h-11 w-11 shrink-0 bg-gradient-to-r from-primary to-accent shadow-lg shadow-primary/40 hover:shadow-primary/60 hover:brightness-110 glass-border"
-              onClick={handleSend}
-              disabled={!input.trim() && !currentImage}
-            >
-              <Send className="w-5 h-5" />
-            </Button>
+            <div className="relative">
+              {input.trim() && (
+                <div className="absolute -inset-1 bg-primary/30 blur-md rounded-full animate-button-ripple" />
+              )}
+              <Button
+                size="icon"
+                className={cn(
+                  "h-11 w-11 shrink-0 relative z-10 transition-all duration-300 glass-border",
+                  input.trim() || currentImage
+                    ? "bg-gradient-to-r from-primary to-accent shadow-lg shadow-primary/40 hover:shadow-primary/60 hover:scale-105 active:scale-95"
+                    : "bg-secondary text-muted-foreground opacity-50 cursor-not-allowed"
+                )}
+                onClick={handleSend}
+                disabled={!input.trim() && !currentImage}
+              >
+                <Send className={cn(
+                  "w-5 h-5 transition-transform duration-300",
+                  input.trim() && "translate-x-0.5 -translate-y-0.5 group-hover:scale-110"
+                )} />
+              </Button>
+            </div>
           )}
         </div>
       </div>

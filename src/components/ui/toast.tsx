@@ -23,10 +23,10 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
     const id = `toast_${Date.now()}`
     setToasts((prev) => [...prev, { id, message, type }])
 
-    // Auto remove after 2.5 seconds
+    // Auto remove after 3.5 seconds to give more time to read
     setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id))
-    }, 2500)
+    }, 3500)
   }, [])
 
   const removeToast = React.useCallback((id: string) => {
@@ -53,7 +53,7 @@ function ToastContainer() {
   const { toasts, removeToast } = useToast()
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-2">
+    <div className="fixed top-8 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-3 w-full max-w-md pointer-events-none">
       {toasts.map((toast) => (
         <ToastItem key={toast.id} toast={toast} onClose={() => removeToast(toast.id)} />
       ))}
@@ -62,6 +62,13 @@ function ToastContainer() {
 }
 
 function ToastItem({ toast, onClose }: { toast: Toast; onClose: () => void }) {
+  const [isClosing, setIsClosing] = React.useState(false)
+
+  React.useEffect(() => {
+    const timer = setTimeout(() => setIsClosing(true), 3200)
+    return () => clearTimeout(timer)
+  }, [])
+
   const Icon = {
     success: CheckCircle2,
     error: XCircle,
@@ -71,27 +78,60 @@ function ToastItem({ toast, onClose }: { toast: Toast; onClose: () => void }) {
   return (
     <div
       className={cn(
-        'flex items-center gap-3 px-4 py-3 rounded-lg border bg-card shadow-lg animate-slide-in',
-        toast.type === 'success' && 'border-accent-cyan/30',
-        toast.type === 'error' && 'border-destructive/30',
-        toast.type === 'info' && 'border-border'
+        'relative group pointer-events-auto overflow-hidden',
+        'flex items-center gap-4 px-6 py-4 rounded-2xl border bg-card/80 backdrop-blur-xl shadow-2xl transition-all duration-300',
+        'min-w-[320px] max-w-full',
+        isClosing ? 'animate-toast-out' : 'animate-toast-in',
+        toast.type === 'success' && 'border-accent-cyan/40 shadow-accent-cyan/10',
+        toast.type === 'error' && 'border-destructive/40 shadow-destructive/10',
+        toast.type === 'info' && 'border-primary/40 shadow-primary/10'
       )}
     >
-      <Icon
-        className={cn(
-          'w-4 h-4',
-          toast.type === 'success' && 'text-accent-cyan',
-          toast.type === 'error' && 'text-destructive',
-          toast.type === 'info' && 'text-muted-foreground'
-        )}
-      />
-      <span className="text-sm text-foreground">{toast.message}</span>
+      {/* Background Glow */}
+      <div className={cn(
+        'absolute inset-0 opacity-5 px-6 pointer-events-none',
+        toast.type === 'success' && 'bg-accent-cyan',
+        toast.type === 'error' && 'bg-destructive',
+        toast.type === 'info' && 'bg-primary'
+      )} />
+
+      <div className={cn(
+        'flex items-center justify-center w-10 h-10 rounded-xl shrink-0',
+        toast.type === 'success' && 'bg-accent-cyan/15 text-accent-cyan',
+        toast.type === 'error' && 'bg-destructive/15 text-destructive',
+        toast.type === 'info' && 'bg-primary/15 text-primary'
+      )}>
+        <Icon className="w-5 h-5" />
+      </div>
+
+      <div className="flex-1 min-w-0 pr-2">
+        <p className="text-sm font-bold text-foreground tracking-tight line-clamp-2">
+          {toast.message}
+        </p>
+      </div>
+
       <button
-        onClick={onClose}
-        className="ml-2 text-muted-foreground hover:text-foreground transition-colors"
+        onClick={() => {
+          setIsClosing(true)
+          setTimeout(onClose, 300)
+        }}
+        className="shrink-0 p-1.5 rounded-lg hover:bg-white/5 text-muted-foreground hover:text-foreground transition-all active:scale-90"
       >
-        <X className="w-3.5 h-3.5" />
+        <X className="w-4 h-4" />
       </button>
+
+      {/* Progress Bar Loader */}
+      <div className="absolute bottom-0 left-0 h-1 bg-white/5 w-full overflow-hidden">
+        <div
+          className={cn(
+            "h-full transition-all duration-[3200ms] ease-linear",
+            toast.type === 'success' && 'bg-accent-cyan',
+            toast.type === 'error' && 'bg-destructive',
+            toast.type === 'info' && 'bg-primary'
+          )}
+          style={{ width: isClosing ? '0%' : '100%' }}
+        />
+      </div>
     </div>
   )
 }
