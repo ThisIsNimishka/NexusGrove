@@ -8,6 +8,8 @@ interface SettingsState {
   streaming: boolean
   parameters: Parameters
   apiUrl: string | null // Custom API URL override
+  historySidebarCollapsed: boolean
+  settingsSidebarCollapsed: boolean
 
   // Actions
   setTheme: (theme: Theme) => void
@@ -17,6 +19,8 @@ interface SettingsState {
   applyPreset: (preset: PresetName) => void
   resetParameters: () => void
   setApiUrl: (url: string | null) => void
+  toggleHistorySidebar: () => void
+  toggleSettingsSidebar: () => void
 }
 
 const defaultParameters: Parameters = {
@@ -35,6 +39,8 @@ export const useSettingsStore = create<SettingsState>()(
       streaming: true,
       parameters: defaultParameters,
       apiUrl: null,
+      historySidebarCollapsed: false,
+      settingsSidebarCollapsed: false,
 
       setTheme: (theme) => {
         document.documentElement.setAttribute('data-theme', theme)
@@ -66,6 +72,12 @@ export const useSettingsStore = create<SettingsState>()(
         })),
 
       setApiUrl: (url) => set({ apiUrl: url }),
+
+      toggleHistorySidebar: () =>
+        set((state) => ({ historySidebarCollapsed: !state.historySidebarCollapsed })),
+
+      toggleSettingsSidebar: () =>
+        set((state) => ({ settingsSidebarCollapsed: !state.settingsSidebarCollapsed })),
     }),
     {
       name: 'modelgarden-settings',

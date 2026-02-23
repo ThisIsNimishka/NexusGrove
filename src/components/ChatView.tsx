@@ -13,6 +13,7 @@ import {
   FlaskConical,
   X,
   Trash2,
+  Focus,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
@@ -45,7 +46,7 @@ export function ChatView() {
   const { currentChatId, getCurrentChat, addMessage, updateChatTitle, isGenerating, setGenerating, isLoading: isChatsLoading } =
     useChatStore()
   const { selectedModelId, loadModels } = useModelStore()
-  const { streaming, parameters } = useSettingsStore()
+  const { streaming, parameters, historySidebarCollapsed, settingsSidebarCollapsed } = useSettingsStore()
   const { addToast } = useToast()
 
   const currentChat = getCurrentChat()
@@ -250,8 +251,14 @@ export function ChatView() {
             className="bg-transparent border border-transparent text-base font-display font-semibold focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 hover:border-border/50 rounded-lg px-3 py-1.5 transition-colors cursor-text"
           />
           {messages.length > 0 && (
-            <div className="px-2 py-0.5 rounded-full bg-white/5 text-[10px] font-medium text-muted-foreground border border-white/10">
+            <div className="px-2 py-0.5 rounded-full bg-white/5 text-[10px] font-medium text-muted-foreground border border-white/10 transition-butter">
               {messages.length} {messages.length === 1 ? 'message' : 'messages'}
+            </div>
+          )}
+          {historySidebarCollapsed && settingsSidebarCollapsed && (
+            <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-primary/10 border border-primary/20 text-[10px] font-bold text-primary uppercase tracking-[0.1em] animate-pulse-glow">
+              <Focus className="w-3 h-3" />
+              Focus Mode
             </div>
           )}
         </div>
