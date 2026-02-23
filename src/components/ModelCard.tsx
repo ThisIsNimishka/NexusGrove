@@ -18,13 +18,13 @@ export function ModelCard({ modelId }: { modelId: string }) {
     <button
       onClick={handleSelect}
       className={cn(
-        'w-full text-left p-2.5 rounded-lg border transition-all duration-300 relative overflow-hidden group',
-        'bg-card border-border hover:border-primary',
+        'w-full text-left p-2.5 rounded-lg border border-white/10 transition-all duration-300 relative overflow-hidden group',
+        'glass-card hover:border-primary/50',
         'hover:shadow-[0_0_15px_hsl(var(--primary)/0.25)]',
         isActive && [
           'border-primary',
-          'bg-gradient-to-br from-primary/15 to-accent/10',
-          'shadow-[0_0_20px_hsl(var(--primary)/0.2)]',
+          'bg-gradient-to-br from-primary/20 to-accent/15',
+          'shadow-[0_0_20px_hsl(var(--primary)/0.3)]',
         ]
       )}
     >

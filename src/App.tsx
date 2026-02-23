@@ -8,6 +8,8 @@ import { useChatStore } from '@/stores/chatStore'
 import { useModelStore } from '@/stores/modelStore'
 import { useSettingsStore } from '@/stores/settingsStore'
 
+import { BackgroundBlobs } from '@/components/BackgroundBlobs'
+
 function App() {
   const [showSplash, setShowSplash] = useState(() => {
     // Show splash on first visit of session
@@ -39,7 +41,8 @@ function App() {
 
   return (
     <ToastProvider>
-      <div className="fixed inset-0 overflow-hidden bg-gradient-animated">
+      <div className="fixed inset-0 overflow-hidden bg-background">
+        <BackgroundBlobs />
         <div className="relative z-10 h-full flex">
           <HistorySidebar />
           <ChatView />

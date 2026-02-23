@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Palette, Sparkles, SlidersHorizontal, Terminal, Network, Unplug, RefreshCw, Globe, Settings2 } from 'lucide-react'
+import { Palette, Sparkles, SlidersHorizontal, Terminal, Network, Unplug, RefreshCw, Settings2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 import { Slider } from '@/components/ui/slider'
@@ -38,14 +38,11 @@ export function SettingsSidebar() {
     setSystemPrompt,
     applyPreset,
     resetParameters,
-    apiUrl,
-    setApiUrl,
   } = useSettingsStore()
   const { isConnected, loadModels } = useModelStore()
   const { addToast } = useToast()
 
-  const [tempApiUrl, setTempApiUrl] = useState(apiUrl || '')
-  const [isEditingApi, setIsEditingApi] = useState(false)
+
 
   const handleRefresh = async () => {
     setIsRefreshing(true)
@@ -66,7 +63,7 @@ export function SettingsSidebar() {
 
 
   return (
-    <aside className="w-80 bg-secondary border-l border-border flex flex-col">
+    <aside className="w-80 glass border-l border-white/10 flex flex-col z-30">
       <ScrollArea className="flex-1">
         <div className="p-5 space-y-6">
           {/* Theme Section */}
@@ -183,7 +180,7 @@ export function SettingsSidebar() {
             />
           </section>
 
-          {/* API Configuration */}
+          {/* API Configuration - Hidden for now
           <section className="pt-4 border-t border-border/50">
             <SectionHeader icon={Globe} title="API Configuration" />
             <div className="space-y-3">
@@ -249,6 +246,7 @@ export function SettingsSidebar() {
               )}
             </div>
           </section>
+          */}
 
           {/* Version Info */}
           <div className="pt-4 flex items-center justify-center gap-2 opacity-30">

@@ -236,7 +236,7 @@ export function ChatView() {
   return (
     <main className="flex-1 flex flex-col min-w-0">
       {/* Header */}
-      <header className="px-6 py-4 border-b border-border bg-background/80 backdrop-blur-xl flex items-center justify-between">
+      <header className="px-6 py-4 glass border-b border-white/10 flex items-center justify-between sticky top-0 z-20">
         <div className="flex items-center gap-3">
           <input
             type="text"
@@ -246,23 +246,23 @@ export function ChatView() {
             className="bg-transparent border border-transparent text-base font-display font-semibold focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 hover:border-border/50 rounded-lg px-3 py-1.5 transition-colors cursor-text"
           />
           {messages.length > 0 && (
-            <div className="px-2 py-0.5 rounded-full bg-secondary text-[10px] font-medium text-muted-foreground border border-border/50">
+            <div className="px-2 py-0.5 rounded-full bg-white/5 text-[10px] font-medium text-muted-foreground border border-white/10">
               {messages.length} {messages.length === 1 ? 'message' : 'messages'}
             </div>
           )}
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="icon" onClick={handleExport} title="Export Chat">
+          <Button variant="outline" size="icon" onClick={handleExport} title="Export Chat" className="glass-border">
             <Download className="w-4 h-4" />
           </Button>
-          <Button variant="outline" size="icon" onClick={handleRefreshModels} title="Refresh Models">
+          <Button variant="outline" size="icon" onClick={handleRefreshModels} title="Refresh Models" className="glass-border">
             <RefreshCw className="w-4 h-4" />
           </Button>
           <Button
             variant="outline"
             size="icon"
             onClick={handleDeleteCurrentChat}
-            className="hover:bg-destructive/10 hover:text-destructive hover:border-destructive/30"
+            className="hover:bg-destructive/10 hover:text-destructive hover:border-destructive/30 glass-border"
             title="Delete Chat"
           >
             <Trash2 className="w-4 h-4" />
@@ -309,18 +309,18 @@ export function ChatView() {
         </div>
       </ScrollArea>
 
-      {/* Input */}
-      <div className="p-4 border-t border-border bg-background/80 backdrop-blur-xl">
+      {/* Input Area Wrapper */}
+      <div className="p-4 border-t border-white/10 glass sticky bottom-0 z-20">
         <div className="flex gap-3 items-end">
           <div
             className={cn(
-              'flex-1 bg-card border border-border rounded-xl p-4 space-y-3 transition-all',
+              'flex-1 glass-card p-4 space-y-3 transition-all',
               'focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20'
             )}
           >
             {/* Image Preview */}
             {currentImage && (
-              <div className="flex items-center gap-3 p-2.5 bg-secondary rounded-lg">
+              <div className="flex items-center gap-3 p-2.5 bg-white/5 rounded-lg border border-white/10 glass">
                 <img
                   src={currentImage}
                   alt="Preview"
@@ -360,7 +360,7 @@ export function ChatView() {
                 <Button
                   variant="outline"
                   size="icon"
-                  className="h-8 w-8"
+                  className="h-8 w-8 glass-border"
                   onClick={() => {
                     if (!canUploadImage) {
                       addToast('Select a Vision model to use images', 'error')
@@ -375,14 +375,14 @@ export function ChatView() {
                 <Button
                   variant={streaming ? 'default' : 'outline'}
                   size="icon"
-                  className="h-8 w-8"
+                  className="h-8 w-8 glass-border"
                   onClick={() => useSettingsStore.getState().toggleStreaming()}
                   title={streaming ? 'Streaming enabled' : 'Streaming disabled'}
                 >
                   <Zap className="w-4 h-4" />
                 </Button>
               </div>
-              <span className="text-[10px] text-muted-foreground">
+              <span className="text-[10px] text-muted-foreground font-medium">
                 Enter to send · Shift+Enter for new line
               </span>
             </div>
@@ -392,7 +392,7 @@ export function ChatView() {
             <Button
               variant="destructive"
               size="icon"
-              className="h-11 w-11 shrink-0 !bg-red-600 hover:!bg-red-700 shadow-lg shadow-red-600/30"
+              className="h-11 w-11 shrink-0 !bg-red-600 hover:!bg-red-700 shadow-lg shadow-red-600/30 glass-border"
               onClick={handleStop}
               title="Stop generation"
             >
@@ -401,7 +401,7 @@ export function ChatView() {
           ) : (
             <Button
               size="icon"
-              className="h-11 w-11 shrink-0 bg-gradient-to-r from-primary to-accent shadow-lg shadow-primary/40 hover:shadow-primary/60 hover:brightness-110"
+              className="h-11 w-11 shrink-0 bg-gradient-to-r from-primary to-accent shadow-lg shadow-primary/40 hover:shadow-primary/60 hover:brightness-110 glass-border"
               onClick={handleSend}
               disabled={!input.trim() && !currentImage}
             >
@@ -422,7 +422,7 @@ function WelcomeState({ onPromptClick }: { onPromptClick: (text: string) => void
       </div>
       <div>
         <h1 className="text-2xl font-display font-bold tracking-tight mb-2">
-          Welcome to <span className="text-primary">Model Garden</span>
+          Welcome to <span className="text-primary text-gradient">Model Garden</span>
         </h1>
         <p className="text-muted-foreground max-w-md">
           Intel SIV's local AI playground. Select a model and start exploring.
@@ -433,7 +433,7 @@ function WelcomeState({ onPromptClick }: { onPromptClick: (text: string) => void
           <button
             key={text}
             onClick={() => onPromptClick(text)}
-            className="p-4 rounded-xl bg-card border border-border hover:border-primary hover:-translate-y-0.5 hover:scale-[1.02] hover:shadow-lg hover:shadow-primary/10 transition-all text-left group"
+            className="p-4 rounded-xl glass-card hover:border-primary/50 hover:-translate-y-0.5 hover:scale-[1.02] hover:shadow-lg hover:shadow-primary/10 transition-all text-left group"
           >
             <Icon className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors mb-2" />
             <p className="text-sm text-muted-foreground group-hover:text-foreground transition-colors line-clamp-2">

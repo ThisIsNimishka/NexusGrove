@@ -41,7 +41,7 @@ export function HistorySidebar() {
   const groupedChats = groupChatsByDate(filteredChats)
 
   return (
-    <aside className="w-80 bg-secondary border-r border-border flex flex-col">
+    <aside className="w-80 glass border-r border-white/10 flex flex-col z-30">
       {/* Header */}
       <div className="p-5 border-b border-border space-y-3">
         <div className="flex items-center gap-3">

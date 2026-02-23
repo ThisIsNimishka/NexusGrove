@@ -90,10 +90,10 @@ export const ChatMessage = memo(function ChatMessage({
       {/* Content */}
       <div
         className={cn(
-          'group/msg relative rounded-xl px-4 py-3 text-sm leading-relaxed transition-colors',
+          'group/msg relative rounded-2xl px-5 py-3.5 text-sm leading-relaxed transition-all',
           isUser
-            ? 'bg-primary/10 border border-primary/30'
-            : 'bg-card border border-border'
+            ? 'glass bg-primary/20 border-primary/30 text-foreground ml-auto'
+            : 'glass-card text-foreground/90'
         )}
       >
         {!isUser && !isStreaming && content.html && (

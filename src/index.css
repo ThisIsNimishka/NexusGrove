@@ -142,6 +142,43 @@
   .glow-cyan {
     box-shadow: 0 0 12px hsl(var(--accent-cyan) / 0.3);
   }
+
+  .glass {
+    @apply bg-background/40 backdrop-blur-xl border border-white/10;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  }
+
+  .glass-card {
+    @apply bg-card/40 backdrop-blur-2xl border border-white/10 shadow-2xl;
+    background-image: linear-gradient(to bottom right,
+        rgba(255, 255, 255, 0.05),
+        rgba(255, 255, 255, 0));
+  }
+
+  .glass-border {
+    @apply border border-white/10;
+  }
+}
+
+/* Blob animations */
+@keyframes blob-bounce {
+
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+}
+
+.animate-blob {
+  animation: blob-bounce 25s infinite alternate;
 }
 
 /* Custom scrollbar */
