@@ -1,40 +1,34 @@
+import { cn } from '@/lib/utils'
+
 export function BackgroundBlobs() {
-
     return (
-        <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-            {/* Primary Blob */}
+        <div className="fixed inset-0 overflow-hidden pointer-events-none select-none z-0">
             <div
-                className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full blur-[100px] opacity-20 animate-blob"
-                style={{ background: 'hsl(var(--primary))' }}
+                className={cn(
+                    "absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full",
+                    "bg-primary/20 blur-[120px] animate-blob"
+                )}
             />
-
-            {/* Accent Blob */}
             <div
-                className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full blur-[100px] opacity-20 animate-blob"
-                style={{
-                    background: 'hsl(var(--accent))',
-                    animationDelay: '-5s',
-                    animationDuration: '30s'
-                }}
+                className={cn(
+                    "absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full",
+                    "bg-accent/20 blur-[120px] animate-blob"
+                )}
+                style={{ animationDelay: '-5s' }}
             />
-
-            {/* Cyan Blob */}
             <div
-                className="absolute top-[20%] right-[10%] w-[25%] h-[25%] rounded-full blur-[80px] opacity-15 animate-blob"
-                style={{
-                    background: 'hsl(var(--accent-cyan))',
-                    animationDelay: '-12s',
-                    animationDuration: '35s'
-                }}
+                className={cn(
+                    "absolute top-[20%] right-[10%] w-[30%] h-[30%] rounded-full",
+                    "bg-accent-cyan/10 blur-[100px] animate-blob"
+                )}
+                style={{ animationDelay: '-10s' }}
             />
-
-            {/* Secondary Blob for contrast */}
             <div
-                className="absolute bottom-[20%] left-[10%] w-[30%] h-[30%] rounded-full blur-[120px] opacity-10 animate-blob"
-                style={{
-                    background: 'hsl(var(--primary))',
-                    animationDelay: '-18s'
-                }}
+                className={cn(
+                    "absolute bottom-[20%] left-[10%] w-[25%] h-[25%] rounded-full",
+                    "bg-primary/15 blur-[80px] animate-blob"
+                )}
+                style={{ animationDelay: '-15s' }}
             />
         </div>
     )

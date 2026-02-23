@@ -416,27 +416,39 @@ export function ChatView() {
 
 function WelcomeState({ onPromptClick }: { onPromptClick: (text: string) => void }) {
   return (
-    <div className="flex-1 flex flex-col items-center justify-center text-center py-12 space-y-5">
-      <div className="w-[72px] h-[72px] rounded-3xl bg-gradient-to-br from-primary to-accent flex items-center justify-center glow animate-float">
-        <Sprout className="w-8 h-8 text-primary-foreground" />
+    <div className="flex-1 flex flex-col items-center justify-center text-center py-12 space-y-8 animate-fade-in">
+      <div className="relative group">
+        <div className="absolute -inset-4 bg-primary/20 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+        <div className="w-[88px] h-[88px] rounded-[2rem] bg-gradient-to-br from-primary to-accent flex items-center justify-center glow relative z-10 animate-fade-in-up">
+          <Sprout className="w-10 h-10 text-primary-foreground animate-pulse-glow" />
+        </div>
       </div>
-      <div>
-        <h1 className="text-2xl font-display font-bold tracking-tight mb-2">
-          Welcome to <span className="text-primary text-gradient">Model Garden</span>
+
+      <div className="space-y-3">
+        <h1 className="text-4xl font-display font-black tracking-tighter animate-fade-in-up" style={{ animationDelay: '0.1s', animationFillMode: 'both' }}>
+          Welcome to <span className="text-gradient">Model Garden</span>
         </h1>
-        <p className="text-muted-foreground max-w-md">
-          Intel SIV's local AI playground. Select a model and start exploring.
+        <p className="text-muted-foreground max-w-md text-base font-medium animate-fade-in-up" style={{ animationDelay: '0.2s', animationFillMode: 'both' }}>
+          Intel MMET's local AI playground. <br />
+          Select a model and start building the future.
         </p>
       </div>
-      <div className="grid grid-cols-2 gap-3 max-w-lg mt-4">
-        {QUICK_PROMPTS.map(({ icon: Icon, text }) => (
+
+      <div className="grid grid-cols-2 gap-4 max-w-xl mt-4">
+        {QUICK_PROMPTS.map(({ icon: Icon, text }, i) => (
           <button
             key={text}
             onClick={() => onPromptClick(text)}
-            className="p-4 rounded-xl glass-card hover:border-primary/50 hover:-translate-y-0.5 hover:scale-[1.02] hover:shadow-lg hover:shadow-primary/10 transition-all text-left group"
+            className="p-5 rounded-2xl glass-card hover:border-primary/50 hover:-translate-y-1 hover:scale-[1.02] hover:shadow-2xl hover:shadow-primary/20 transition-all text-left group animate-fade-in-up"
+            style={{
+              animationDelay: `${0.3 + i * 0.1}s`,
+              animationFillMode: 'both'
+            }}
           >
-            <Icon className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors mb-2" />
-            <p className="text-sm text-muted-foreground group-hover:text-foreground transition-colors line-clamp-2">
+            <div className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center mb-4 group-hover:bg-primary/10 transition-colors">
+              <Icon className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
+            </div>
+            <p className="text-sm font-semibold text-muted-foreground group-hover:text-foreground transition-colors line-clamp-2 leading-relaxed">
               {text}
             </p>
           </button>
