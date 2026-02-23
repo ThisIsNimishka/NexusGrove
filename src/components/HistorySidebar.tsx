@@ -131,7 +131,7 @@ export function HistorySidebar() {
                         }
                       }}
                       className={cn(
-                        'w-full flex items-center gap-2 p-2.5 rounded-lg transition-all group text-left cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-primary',
+                        'w-full flex items-center gap-2 p-2.5 rounded-lg transition-butter duration-butter group text-left cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-primary',
                         'hover:bg-card-foreground/5 hover:translate-x-0.5',
                         currentChatId === chat.id && 'bg-primary/15 border border-primary/30'
                       )}

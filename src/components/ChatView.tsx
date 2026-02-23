@@ -415,7 +415,7 @@ export function ChatView() {
               <Button
                 size="icon"
                 className={cn(
-                  "h-11 w-11 shrink-0 relative z-10 transition-all duration-300 glass-border",
+                  "h-11 w-11 shrink-0 relative z-10 transition-butter duration-butter glass-border",
                   input.trim() || currentImage
                     ? "bg-gradient-to-r from-primary to-accent shadow-lg shadow-primary/40 hover:shadow-primary/60 hover:scale-105 active:scale-95"
                     : "bg-secondary text-muted-foreground opacity-50 cursor-not-allowed"

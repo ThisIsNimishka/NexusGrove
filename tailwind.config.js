@@ -75,8 +75,14 @@ export default {
         'glow-pulse': 'glow-pulse 3s ease-in-out infinite',
         'float': 'float 3s ease-in-out infinite',
         'typing': 'typing 1.4s infinite ease-in-out',
-        'fade-in': 'fade-in 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-        'slide-in': 'slide-in 0.3s ease',
+        'fade-in': 'fade-in 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
+        'slide-in': 'slide-in 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+      },
+      transitionTimingFunction: {
+        'butter': 'cubic-bezier(0.16, 1, 0.3, 1)',
+      },
+      transitionDuration: {
+        'butter': '500ms',
       },
     },
   },

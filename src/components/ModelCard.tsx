@@ -18,7 +18,7 @@ export function ModelCard({ modelId }: { modelId: string }) {
     <button
       onClick={handleSelect}
       className={cn(
-        'w-full text-left p-2.5 rounded-lg border border-white/10 transition-all duration-300 relative overflow-hidden group',
+        'w-full text-left p-2.5 rounded-lg border border-white/10 transition-butter duration-butter relative overflow-hidden group',
         'glass-card hover:border-primary/50',
         'hover:shadow-[0_0_15px_hsl(var(--primary)/0.25)]',
         isActive && [
