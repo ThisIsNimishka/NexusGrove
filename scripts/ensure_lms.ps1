@@ -2,91 +2,102 @@
 # Goal: Ensure LM Studio server and ALL configured models are always running 24/7.
 
 # =============================================================================
-# CONFIG - Edit this list to change which models are always kept loaded
+# CONFIG - Edit this list to change which models are always kept loaded.
+# Use the exact modelKey from: lms ls --json
 # =============================================================================
 $MODELS_TO_KEEP = @(
-    "nvidia/nemotron-3-nano",
+    "google/gemma-3-4b",
     "qwen/qwen3-vl-4b",
-    "openai/gpt-oss-20b",
-    "google/gemma-3-4b"
+    "openai/gpt-oss-20b"
 )
-$PORT          = 1234
+# NOTE: nvidia/nemotron-3-nano (30B, 24GB) is excluded as it fails to load
+# when other models are already using VRAM. Load it manually when needed.
+
+$PORT           = 1234
+$API_URL        = "http://127.0.0.1:$PORT/v1/models"
 $CHECK_INTERVAL = 60  # Seconds between health checks
 # =============================================================================
+
+function Write-Status($msg, $color = "White") {
+    Write-Host "  $msg" -ForegroundColor $color
+}
 
 Write-Host ""
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host "  LM Studio 24/7 Monitor - STARTED" -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
-Write-Host "  Models to maintain:"
+Write-Host "  Port   : $PORT"
+Write-Host "  Models :"
 $MODELS_TO_KEEP | ForEach-Object { Write-Host "    · $_" -ForegroundColor White }
-Write-Host "  Check interval: ${CHECK_INTERVAL}s"
+Write-Host "  Interval: ${CHECK_INTERVAL}s"
 Write-Host "========================================"
 Write-Host ""
 
 while ($true) {
     $timestamp = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'
-    Write-Host "[$timestamp] Running health check..." -ForegroundColor DarkGray
+    Write-Host "[$timestamp] Health check..." -ForegroundColor DarkGray
 
     # ------------------------------------------------------------------
     # STEP 1: Ensure the LM Studio server is running
     # ------------------------------------------------------------------
     $status = lms status 2>&1 | Out-String
-    $isServerOn = $status -match "Server: ON"
 
-    if (-not $isServerOn) {
-        Write-Host "  [!] Server is DOWN — attempting to start..." -ForegroundColor Red
-        lms server start
-        Start-Sleep -Seconds 8  # Give LM Studio time to start up
-        $status = lms status 2>&1 | Out-String  # Refresh status after start
+    if (-not ($status -match "Server: ON")) {
+        Write-Status "[!] Server is DOWN — starting..." Red
+        lms server start 2>&1 | Out-Null
+        Start-Sleep -Seconds 8
+        $status = lms status 2>&1 | Out-String
         if ($status -match "Server: ON") {
-            Write-Host "  [✓] Server started successfully." -ForegroundColor Green
+            Write-Status "[✓] Server started on port $PORT." Green
         } else {
-            Write-Host "  [✗] Server failed to start! Will retry next cycle." -ForegroundColor Red
+            Write-Status "[✗] Server failed to start. Retrying in ${CHECK_INTERVAL}s..." Red
             Start-Sleep -Seconds $CHECK_INTERVAL
             continue
         }
     } else {
-        Write-Host "  [✓] Server: ON (port $PORT)" -ForegroundColor Green
+        Write-Status "[✓] Server: ON (port $PORT)" Green
     }
 
     # ------------------------------------------------------------------
-    # STEP 2: Check each required model and load if it's not running
+    # STEP 2: Query loaded models via API
     # ------------------------------------------------------------------
-    # Get list of currently loaded model IDs from the API
     try {
-        $apiResponse = curl.exe -s "http://127.0.0.1:$PORT/v1/models" | ConvertFrom-Json
-        $loadedModelIds = $apiResponse.data | ForEach-Object { $_.id }
+        $apiResponse   = curl.exe -s $API_URL | ConvertFrom-Json
+        $loadedIds     = @($apiResponse.data | ForEach-Object { $_.id })
     } catch {
-        Write-Host "  [!] Could not query /v1/models API — server may still be warming up." -ForegroundColor Yellow
+        Write-Status "[!] Could not reach /v1/models — retrying in ${CHECK_INTERVAL}s..." Yellow
         Start-Sleep -Seconds $CHECK_INTERVAL
         continue
     }
 
+    # ------------------------------------------------------------------
+    # STEP 3: Load any missing models
+    # ------------------------------------------------------------------
     $allGood = $true
     foreach ($model in $MODELS_TO_KEEP) {
-        if ($loadedModelIds -contains $model) {
-            Write-Host "  [✓] $model — loaded" -ForegroundColor Green
+        if ($loadedIds -contains $model) {
+            Write-Status "[✓] $model" Green
         } else {
-            Write-Host "  [!] $model — NOT loaded, loading now..." -ForegroundColor Yellow
+            Write-Status "[!] $model not loaded — loading now..." Yellow
             lms load $model --yes 2>&1 | Out-Null
-            # Verify it loaded
             Start-Sleep -Seconds 3
-            $apiResponse2 = curl.exe -s "http://127.0.0.1:$PORT/v1/models" | ConvertFrom-Json
-            $loadedNow = $apiResponse2.data | ForEach-Object { $_.id }
-            if ($loadedNow -contains $model) {
-                Write-Host "  [✓] $model — loaded successfully." -ForegroundColor Green
+
+            # Verify it loaded
+            $check = curl.exe -s $API_URL | ConvertFrom-Json
+            $nowLoaded = @($check.data | ForEach-Object { $_.id })
+            if ($nowLoaded -contains $model) {
+                Write-Status "[✓] $model loaded successfully." Green
             } else {
-                Write-Host "  [✗] $model — failed to load! Will retry next cycle." -ForegroundColor Red
+                Write-Status "[✗] $model failed to load." Red
                 $allGood = $false
             }
         }
     }
 
     if ($allGood) {
-        Write-Host "  All systems good. Next check in ${CHECK_INTERVAL}s." -ForegroundColor DarkGray
+        Write-Host "  All good. Next check in ${CHECK_INTERVAL}s." -ForegroundColor DarkGray
     } else {
-        Write-Host "  Some models failed to load. Next check in ${CHECK_INTERVAL}s." -ForegroundColor Yellow
+        Write-Host "  Some models failed. Next check in ${CHECK_INTERVAL}s." -ForegroundColor Yellow
     }
 
     Write-Host ""
