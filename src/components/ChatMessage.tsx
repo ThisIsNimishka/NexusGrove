@@ -1,18 +1,23 @@
 import { memo, useEffect, useRef, useState } from 'react'
-import { User, Bot, Zap, Clock, Hash, Square, Copy, Check } from 'lucide-react'
+import { User, Bot, Zap, Clock, Hash, Square, Copy, Check, Pencil, X } from 'lucide-react'
 import { cn, formatRelativeTime } from '@/lib/utils'
 import type { Message, MessageContent, StreamMetrics } from '@/types'
 
 interface ChatMessageProps {
   message: Message
   isStreaming?: boolean
+  onEdit?: (newText: string) => void
 }
 
 export const ChatMessage = memo(function ChatMessage({
   message,
   isStreaming = false,
+  onEdit,
 }: ChatMessageProps) {
   const [copied, setCopied] = useState(false)
+  const [isEditing, setIsEditing] = useState(false)
+  const [editText, setEditText] = useState('')
+  const editTextareaRef = useRef<HTMLTextAreaElement>(null)
   const isUser = message.role === 'user'
   const content = formatContent(message.content)
   const contentRef = useRef<HTMLDivElement>(null)
@@ -59,6 +64,41 @@ export const ChatMessage = memo(function ChatMessage({
     setTimeout(() => setCopied(false), 2000)
   }
 
+  const handleEditStart = () => {
+    const plainText = typeof message.content === 'string'
+      ? message.content
+      : message.content.filter(p => p.type === 'text').map(p => p.type === 'text' ? p.text : '').join('\n')
+    setEditText(plainText)
+    setIsEditing(true)
+    setTimeout(() => {
+      editTextareaRef.current?.focus()
+      editTextareaRef.current?.setSelectionRange(plainText.length, plainText.length)
+    }, 0)
+  }
+
+  const handleEditSave = () => {
+    const trimmed = editText.trim()
+    if (trimmed && onEdit) {
+      onEdit(trimmed)
+    }
+    setIsEditing(false)
+  }
+
+  const handleEditCancel = () => {
+    setIsEditing(false)
+    setEditText('')
+  }
+
+  const handleEditKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      handleEditSave()
+    }
+    if (e.key === 'Escape') {
+      handleEditCancel()
+    }
+  }
+
   return (
     <div
       className={cn(
@@ -96,6 +136,18 @@ export const ChatMessage = memo(function ChatMessage({
             : 'glass-card text-foreground/90'
         )}
       >
+        {/* Edit button for user messages */}
+        {isUser && !isStreaming && onEdit && !isEditing && (
+          <button
+            onClick={handleEditStart}
+            className="absolute top-2 left-2 p-1.5 rounded-lg bg-background/50 border border-border opacity-0 group-hover/msg:opacity-100 transition-opacity hover:bg-background z-10"
+            title="Edit message"
+          >
+            <Pencil className="w-3.5 h-3.5 text-muted-foreground" />
+          </button>
+        )}
+
+        {/* Copy button for AI messages */}
         {!isUser && !isStreaming && content.html && (
           <button
             onClick={handleCopyFull}
@@ -109,7 +161,39 @@ export const ChatMessage = memo(function ChatMessage({
             )}
           </button>
         )}
-        {isStreaming && !content.html ? (
+
+        {/* Inline edit mode */}
+        {isEditing ? (
+          <div className="space-y-2 min-w-[260px]">
+            <textarea
+              ref={editTextareaRef}
+              value={editText}
+              onChange={(e) => {
+                setEditText(e.target.value)
+                e.target.style.height = 'auto'
+                e.target.style.height = `${Math.min(e.target.scrollHeight, 300)}px`
+              }}
+              onKeyDown={handleEditKeyDown}
+              rows={1}
+              className="w-full bg-background/40 border border-primary/40 rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary/50 leading-relaxed"
+              style={{ minHeight: '36px' }}
+            />
+            <div className="flex items-center gap-2 justify-end">
+              <button
+                onClick={handleEditCancel}
+                className="flex items-center gap-1 px-2.5 py-1 text-xs rounded-lg bg-white/5 hover:bg-white/10 text-muted-foreground hover:text-foreground transition-all border border-white/10"
+              >
+                <X className="w-3 h-3" /> Cancel
+              </button>
+              <button
+                onClick={handleEditSave}
+                className="flex items-center gap-1 px-2.5 py-1 text-xs rounded-lg bg-primary/80 hover:bg-primary text-primary-foreground transition-all font-semibold shadow-md"
+              >
+                <Pencil className="w-3 h-3" /> Save & Re-send
+              </button>
+            </div>
+          </div>
+        ) : isStreaming && !content.html ? (
           <TypingIndicator />
         ) : (
           <>

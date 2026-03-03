@@ -43,7 +43,7 @@ export function ChatView() {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const abortControllerRef = useRef<AbortController | null>(null)
 
-  const { currentChatId, getCurrentChat, addMessage, updateChatTitle, isGenerating, setGenerating, isLoading: isChatsLoading } =
+  const { currentChatId, getCurrentChat, addMessage, updateMessage, updateChatTitle, isGenerating, setGenerating, isLoading: isChatsLoading } =
     useChatStore()
   const { selectedModelId, loadModels } = useModelStore()
   const { streaming, parameters, historySidebarCollapsed, settingsSidebarCollapsed } = useSettingsStore()
@@ -228,6 +228,94 @@ export function ChatView() {
     await loadModels()
   }
 
+  const handleEditMessage = useCallback(async (messageId: string, newText: string) => {
+    if (!currentChatId || isGenerating) return
+    if (!selectedModelId) {
+      addToast('Please select a model first', 'error')
+      return
+    }
+
+    const chat = getCurrentChat()
+    if (!chat) return
+
+    // Find the index of the edited message
+    const msgIndex = chat.messages.findIndex(m => m.id === messageId)
+    if (msgIndex === -1) return
+
+    // Update the message content in the store
+    await updateMessage(currentChatId, messageId, newText)
+
+    // Delete all messages that came after the edited message
+    const chat2 = getCurrentChat()
+    if (!chat2) return
+    const messagesBeforeAndIncluding = chat2.messages.slice(0, msgIndex + 1)
+
+    // We need to re-build the chat with truncated messages.
+    // Easiest way: update the chat directly via the store.
+    const { chats } = useChatStore.getState()
+    const { db } = await import('@/services/database')
+    const updatedChat = { ...chat2, messages: messagesBeforeAndIncluding, updatedAt: Date.now() }
+    await db.saveChat(updatedChat)
+    useChatStore.setState({ chats: chats.map(c => c.id === currentChatId ? updatedChat : c) })
+
+    // Now re-send with new text as the context
+    setGenerating(true)
+    setStreamingContent('')
+
+    try {
+      const priorMessages = messagesBeforeAndIncluding
+
+      if (streaming) {
+        abortControllerRef.current = new AbortController()
+        let fullContent = ''
+        let metrics: StreamMetrics | undefined
+        try {
+          for await (const chunk of api.streamChat(selectedModelId, priorMessages, {
+            temperature: parameters.temperature,
+            maxTokens: parameters.maxTokens,
+            topP: parameters.topP,
+            topK: parameters.topK,
+            repeatPenalty: parameters.repeatPenalty,
+            systemPrompt: parameters.systemPrompt,
+            signal: abortControllerRef.current.signal,
+          })) {
+            if (chunk.type === 'content') {
+              fullContent += chunk.content
+              setStreamingContent(fullContent)
+            } else if (chunk.type === 'metrics') {
+              metrics = chunk.metrics
+            }
+          }
+        } catch (err) {
+          if (err instanceof Error && err.name === 'AbortError') {
+            metrics = { tokensPerSecond: 0, totalTokens: 0, timeToFirstToken: 0, stopReason: 'Stopped by user' }
+          } else {
+            throw err
+          }
+        }
+        if (fullContent) {
+          await addMessage(currentChatId, { role: 'assistant', content: fullContent, metrics })
+        }
+        abortControllerRef.current = null
+      } else {
+        const response = await api.chat(selectedModelId, priorMessages, {
+          temperature: parameters.temperature,
+          maxTokens: parameters.maxTokens,
+          topP: parameters.topP,
+          topK: parameters.topK,
+          repeatPenalty: parameters.repeatPenalty,
+          systemPrompt: parameters.systemPrompt,
+        })
+        await addMessage(currentChatId, { role: 'assistant', content: response })
+      }
+    } catch (error) {
+      addToast(error instanceof Error ? error.message : 'Failed to regenerate response', 'error')
+    } finally {
+      setGenerating(false)
+      setStreamingContent('')
+    }
+  }, [currentChatId, isGenerating, selectedModelId, getCurrentChat, updateMessage, streaming, parameters, addMessage, setGenerating, addToast])
+
   const handleDeleteCurrentChat = async () => {
     if (!currentChatId) return
     if (window.confirm('Are you sure you want to delete this conversation?')) {
@@ -291,7 +379,11 @@ export function ChatView() {
           ) : (
             <>
               {messages.map((message) => (
-                <ChatMessage key={message.id} message={message} />
+                <ChatMessage
+                  key={message.id}
+                  message={message}
+                  onEdit={message.role === 'user' ? (newText) => handleEditMessage(message.id, newText) : undefined}
+                />
               ))}
               {isGenerating && streamingContent && (
                 <ChatMessage
