@@ -32,18 +32,10 @@ while($true) {
     $hasModel = $status -match "Loaded Models" -and $status -match "  · "
     
     if (-not $hasModel) {
-        Write-Host " [LOADING MODEL: $DEFAULT_MODEL]" -ForegroundColor Yellow
+        Write-Host " [LOADING DEFAULT MODEL: $DEFAULT_MODEL]" -ForegroundColor Yellow
         lms load $DEFAULT_MODEL --yes
     } else {
-        # Optional: Check if the *specific* default model is loaded
-        # Since the user wants "models" loaded, if *any* is loaded, we're good?
-        # Let's check for the default. 
-        if ($status -match $DEFAULT_MODEL) {
-             Write-Host " [MODEL LOADED]" -ForegroundColor Green
-        } else {
-             Write-Host " [REPLACING WITH DEFAULT]" -ForegroundColor Cyan
-             lms load $DEFAULT_MODEL --yes
-        }
+        Write-Host " [MODELS RUNNING]" -ForegroundColor Green
     }
 
     Start-Sleep -Seconds $CHECK_INTERVAL
