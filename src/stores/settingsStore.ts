@@ -39,8 +39,8 @@ export const useSettingsStore = create<SettingsState>()(
       streaming: true,
       parameters: defaultParameters,
       apiUrl: null,
-      historySidebarCollapsed: false,
-      settingsSidebarCollapsed: false,
+      historySidebarCollapsed: true,
+      settingsSidebarCollapsed: true,
 
       setTheme: (theme) => {
         document.documentElement.setAttribute('data-theme', theme)
