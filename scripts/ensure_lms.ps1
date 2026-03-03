@@ -8,10 +8,10 @@
 $MODELS_TO_KEEP = @(
     "google/gemma-3-4b",
     "qwen/qwen3-vl-4b",
-    "openai/gpt-oss-20b"
+    "openai/gpt-oss-20b",
+    "nvidia/nemotron-3-nano"
 )
-# NOTE: nvidia/nemotron-3-nano (30B, 24GB) is excluded as it fails to load
-# when other models are already using VRAM. Load it manually when needed.
+# All 4 models confirmed working across dual RTX 3080 (20GB VRAM total + RAM offload)
 
 $PORT           = 1234
 $API_URL        = "http://127.0.0.1:$PORT/v1/models"
