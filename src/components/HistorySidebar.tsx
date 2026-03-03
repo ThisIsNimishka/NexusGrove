@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { ModelCard, ModelCardSkeleton } from '@/components/ModelCard'
 import { useChatStore, getMessagePreview } from '@/stores/chatStore'
-import { useModelStore } from '@/stores/modelStore'
+import { useModelStore, TASK_SUGGESTIONS, getBestModelForTask } from '@/stores/modelStore'
 import { useToast } from '@/components/ui/toast'
 import { useSettingsStore } from '@/stores/settingsStore'
 import { cn } from '@/lib/utils'
@@ -13,8 +13,9 @@ import type { Chat } from '@/types'
 
 export function HistorySidebar() {
   const [searchQuery, setSearchQuery] = useState('')
+  const [activeTask, setActiveTask] = useState<string | null>(null)
   const { chats, currentChatId, createChat, selectChat, deleteChat } = useChatStore()
-  const { models, isLoading, error, loadModels } = useModelStore()
+  const { models, isLoading, error, loadModels, selectModel } = useModelStore()
   const { historySidebarCollapsed, toggleHistorySidebar } = useSettingsStore()
   const { addToast } = useToast()
 
@@ -27,6 +28,22 @@ export function HistorySidebar() {
     e.stopPropagation()
     await deleteChat(chatId)
     addToast('Chat deleted', 'success')
+  }
+
+  const handleTaskFilter = (task: string) => {
+    if (activeTask === task) {
+      setActiveTask(null)
+      return
+    }
+    setActiveTask(task)
+    const loadedIds = models.map(m => m.id)
+    const best = getBestModelForTask(task, loadedIds)
+    if (best) {
+      selectModel(best)
+      addToast(`Best for ${task}: ${best.split('/').pop()}`, 'success')
+    } else {
+      addToast(`No model available for ${task}`, 'error')
+    }
   }
 
   // Filter and group chats
@@ -98,6 +115,30 @@ export function HistorySidebar() {
               <Boxes className="w-4 h-4" />
               Models
             </h3>
+
+            {/* Task filter chips */}
+            {!isLoading && !error && models.length > 0 && (
+              <div className="mb-3">
+                <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground mb-1.5">Pick a task →</p>
+                <div className="flex flex-wrap gap-1">
+                  {TASK_SUGGESTIONS.map(task => (
+                    <button
+                      key={task}
+                      onClick={() => handleTaskFilter(task)}
+                      className={cn(
+                        'text-[9px] px-1.5 py-0.5 rounded-full border font-medium transition-all',
+                        activeTask === task
+                          ? 'bg-primary text-primary-foreground border-primary shadow-sm shadow-primary/40'
+                          : 'bg-white/5 text-muted-foreground border-white/10 hover:border-primary/40 hover:text-primary'
+                      )}
+                    >
+                      {task}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <div className="max-h-[40vh] overflow-y-auto models-scroll">
               <div className="space-y-1.5">
                 {isLoading ? (
