@@ -8,10 +8,11 @@
 $MODELS_TO_KEEP = @(
     "google/gemma-3-4b",
     "qwen/qwen3-vl-4b",
-    "openai/gpt-oss-20b",
-    "nvidia/nemotron-3-nano"
+    "deepseek/deepseek-r1-0528-qwen3-8b",
+    "openai/gpt-oss-20b"
 )
-# All 4 models confirmed working across dual RTX 3080 (20GB VRAM total + RAM offload)
+# Load order matters: smaller models first, then large ones (gpt-oss-20b last).
+# nvidia/nemotron-3-nano (30B) cannot coexist with deepseek — excluded.
 
 $PORT           = 1234
 $API_URL        = "http://127.0.0.1:$PORT/v1/models"
