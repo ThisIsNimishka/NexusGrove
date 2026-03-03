@@ -15,6 +15,7 @@ A modern, beautiful UI for [LM Studio](https://lmstudio.ai) - your local AI play
 - **Chat History** - Persistent conversations stored locally (IndexedDB)
 - **Vision Support** - Upload images for vision-capable models
 - **Streaming Responses** - Real-time token streaming with metrics
+- **Auto-Monitor** - Background script ensures LM Studio is running 24/7
 - **Stop Generation** - Cancel responses mid-stream
 - **Export Chats** - Download conversations as JSON
 - **Docker Ready** - Production-ready containerization
