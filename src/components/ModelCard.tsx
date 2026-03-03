@@ -86,8 +86,8 @@ export function ModelCard({ modelId }: { modelId: string }) {
         </div>
       </button>
 
-      {/* Info toggle */}
-      <button
+      {/* Info toggle — hidden for now, re-enable by changing false to true */}
+      {false && <button
         onClick={(e) => { e.stopPropagation(); setExpanded(v => !v) }}
         className={cn(
           'absolute top-2 right-2 z-20 p-1 rounded-md transition-all',
@@ -97,10 +97,10 @@ export function ModelCard({ modelId }: { modelId: string }) {
         title="Model info"
       >
         <Info className="w-3 h-3" />
-      </button>
+      </button>}
 
-      {/* Expanded info panel */}
-      {expanded && (
+      {/* Expanded info panel — hidden for now */}
+      {false && expanded && (
         <div className="px-3 pb-3 space-y-2.5 border-t border-white/5 pt-2.5 relative z-10">
           {/* Description */}
           <p className="text-[10px] text-muted-foreground leading-relaxed">{info.description}</p>
