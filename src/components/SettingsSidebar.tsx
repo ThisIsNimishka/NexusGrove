@@ -240,9 +240,14 @@ export function SettingsSidebar() {
             </div>
 
             {/* Version Info */}
-            <div className="pt-4 flex items-center justify-center gap-2 opacity-30">
-              <Settings2 className="w-3 h-3" />
-              <span className="text-[10px] font-mono tracking-widest uppercase">v2.1.0-updated</span>
+            <div className="pt-4 flex flex-col items-center justify-center gap-1 opacity-40">
+              <div className="flex items-center gap-2">
+                <Settings2 className="w-3 h-3" />
+                <span className="text-[10px] font-mono tracking-widest uppercase">v2.1.0-updated</span>
+              </div>
+              <p className="text-[8px] font-bold uppercase tracking-[0.2em] whitespace-nowrap">
+                Made with love for AI @Intel • Nimishka Jain
+              </p>
             </div>
           </div>
         </ScrollArea>

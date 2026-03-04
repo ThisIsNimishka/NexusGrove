@@ -250,6 +250,7 @@ export function HistorySidebar() {
           {/* Minimal indicator for models/history when collapsed if needed, but keeping it clean for now */}
         </div>
       )}
+
     </aside>
   )
 }
