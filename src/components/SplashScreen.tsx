@@ -75,10 +75,7 @@ export function SplashScreen({ onEnter }: SplashScreenProps) {
           <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-accent/10 blur-[80px] group-hover/card:bg-accent/20 transition-colors duration-1000" />
 
           {/* Top Bar */}
-          <div className="flex items-center justify-between mb-auto w-full">
-            <span className="font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground/60 flex items-center gap-2 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-              Made with love for AI @Intel • Nimishka Jain
-            </span>
+          <div className="flex items-center justify-end mb-auto">
             <span className="font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground/60 flex items-center gap-2 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
               <span className="w-8 h-px bg-muted-foreground/30" />
               Intel MMET-Gaming & AI
