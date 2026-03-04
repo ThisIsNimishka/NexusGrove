@@ -15,6 +15,7 @@ A modern, beautiful UI for [LM Studio](https://lmstudio.ai) - your local AI play
 - **Chat History** - Persistent conversations stored locally (IndexedDB)
 - **Vision Support** - Upload images for vision-capable models
 - **Streaming Responses** - Real-time token streaming with metrics
+- **Reasoning Model Support** - Animated thinking indicator for models like DeepSeek R1
 - **Auto-Monitor** - Background script ensures LM Studio is running 24/7
 - **Stop Generation** - Cancel responses mid-stream
 - **Export Chats** - Download conversations as JSON
@@ -103,7 +104,7 @@ modelgarden/
 │   ├── components/       # React components
 │   │   ├── ui/          # Reusable UI components (Button, Input, etc.)
 │   │   ├── ChatView.tsx # Main chat interface
-│   │   ├── ChatMessage.tsx # Message rendering with markdown
+│   │   ├── ChatMessage.tsx # Message rendering, markdown, thinking indicator
 │   │   ├── HistorySidebar.tsx # Chat history & model selection
 │   │   ├── SettingsSidebar.tsx # Model parameters & themes
 │   │   └── SplashScreen.tsx # Welcome/branding screen
@@ -144,6 +145,20 @@ Model Garden includes 4 beautiful themes:
 | **Forest** | Calming green palette |
 
 Change themes in the Settings sidebar (right panel).
+
+## Reasoning Models
+
+Model Garden has first-class support for reasoning/thinking models (e.g. **DeepSeek R1**, **QwQ**).
+
+These models emit a `<think>...</think>` block before their answer. Model Garden handles this automatically:
+
+- While the model is **thinking**, a small animated pill appears above the response:
+  - Spinning orbit ring around a 🧠 Brain icon
+  - `Thinking…` label with staggered pulse dots
+- The pill **disappears completely** once the actual answer begins streaming
+- The raw chain-of-thought content is **never displayed** — only the final answer is shown
+
+No configuration required — detection is automatic based on the `<think>` tag format.
 
 ## Model Parameters
 
