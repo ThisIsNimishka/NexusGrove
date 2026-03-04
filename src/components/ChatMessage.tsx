@@ -1,5 +1,5 @@
 import { memo, useEffect, useRef, useState } from 'react'
-import { User, Bot, Zap, Clock, Hash, Square, Copy, Check, Pencil, X } from 'lucide-react'
+import { User, Bot, Zap, Clock, Hash, Square, Copy, Check, Pencil, X, Brain } from 'lucide-react'
 import { cn, formatRelativeTime } from '@/lib/utils'
 import type { Message, MessageContent, StreamMetrics } from '@/types'
 
@@ -19,8 +19,10 @@ export const ChatMessage = memo(function ChatMessage({
   const [editText, setEditText] = useState('')
   const editTextareaRef = useRef<HTMLTextAreaElement>(null)
   const isUser = message.role === 'user'
-  const content = formatContent(message.content)
+  const { thinkingContent, cleanContent } = extractThinking(message.content)
+  const content = formatContent(cleanContent)
   const contentRef = useRef<HTMLDivElement>(null)
+  const isActiveThinking = isStreaming && !!thinkingContent && !content.html
 
   // Add copy functionality to code blocks
   useEffect(() => {
@@ -193,18 +195,28 @@ export const ChatMessage = memo(function ChatMessage({
               </button>
             </div>
           </div>
-        ) : isStreaming && !content.html ? (
+        ) : isStreaming && !content.html && !thinkingContent ? (
           <TypingIndicator />
         ) : (
           <>
-            <div
-              ref={contentRef}
-              className="prose prose-invert prose-sm max-w-none"
-              dangerouslySetInnerHTML={{ __html: content.html }}
-            />
-            {isStreaming && (
-              <span className="inline-block w-[2px] h-[1em] bg-primary ml-0.5 align-middle animate-typing-cursor" />
+            {isActiveThinking && (
+              <ThinkingBlock isActiveThinking={isActiveThinking} />
             )}
+            {content.html ? (
+              <>
+                <div
+                  ref={contentRef}
+                  className="prose prose-invert prose-sm max-w-none"
+                  dangerouslySetInnerHTML={{ __html: content.html }}
+                />
+                {isStreaming && (
+                  <span className="inline-block w-[2px] h-[1em] bg-primary ml-0.5 align-middle animate-typing-cursor" />
+                )}
+              </>
+            ) : isStreaming && thinkingContent ? (
+              // Model is still in thinking phase — show cursor after the block
+              <span className="inline-block w-[2px] h-[1em] bg-primary ml-0.5 align-middle animate-typing-cursor" />
+            ) : null}
             {content.images.map((img, i) => (
               <img
                 key={i}
@@ -222,6 +234,49 @@ export const ChatMessage = memo(function ChatMessage({
     </div>
   )
 })
+
+// ─── Thinking Block ────────────────────────────────────────────────────────────
+function ThinkingBlock({ isActiveThinking }: { isActiveThinking: boolean }) {
+  return (
+    <div
+      className={cn(
+        'thinking-block mb-2.5 inline-flex items-center gap-2 px-3 py-1.5 rounded-full',
+        isActiveThinking ? 'thinking-block--active' : 'thinking-block--done'
+      )}
+    >
+      <span className="relative flex items-center justify-center w-3.5 h-3.5 shrink-0">
+        <Brain
+          className={cn(
+            'w-3 h-3 relative z-10 transition-colors duration-500',
+            isActiveThinking ? 'text-primary/80' : 'text-muted-foreground/35'
+          )}
+        />
+        {isActiveThinking && <span className="thinking-orbit absolute inset-0" />}
+      </span>
+
+      <span
+        className={cn(
+          'text-[10px] font-medium tracking-wider uppercase transition-colors duration-500',
+          isActiveThinking ? 'text-primary/70' : 'text-muted-foreground/35'
+        )}
+      >
+        {isActiveThinking ? 'Thinking…' : 'Thought'}
+      </span>
+
+      {isActiveThinking && (
+        <span className="flex gap-0.5 items-center ml-0.5">
+          {[0, 1, 2].map((i) => (
+            <span
+              key={i}
+              className="w-[3px] h-[3px] rounded-full bg-primary/50 animate-thinking-pulse"
+              style={{ animationDelay: `${i * 0.22}s` }}
+            />
+          ))}
+        </span>
+      )}
+    </div>
+  )
+}
 
 function TypingIndicator() {
   return (
@@ -258,6 +313,29 @@ function MetricsDisplay({ metrics }: { metrics: StreamMetrics }) {
       </span>
     </div>
   )
+}
+
+// ─── Extract <think>…</think> from content ───────────────────────────────────
+function extractThinking(content: MessageContent): { thinkingContent: string; cleanContent: MessageContent } {
+  if (typeof content !== 'string') {
+    return { thinkingContent: '', cleanContent: content }
+  }
+
+  // Match outermost <think>…</think> block (non-greedy)
+  const thinkMatch = content.match(/^\s*<think>([\s\S]*?)<\/think>\s*/)
+  if (thinkMatch) {
+    const thinkingContent = thinkMatch[1]?.trim() ?? ''
+    const cleanContent = content.slice(thinkMatch[0].length)
+    return { thinkingContent, cleanContent }
+  }
+
+  // Handle streaming: model is currently inside an open <think> tag
+  const openMatch = content.match(/^\s*<think>([\s\S]*)$/)
+  if (openMatch) {
+    return { thinkingContent: openMatch[1]?.trim() ?? '', cleanContent: '' }
+  }
+
+  return { thinkingContent: '', cleanContent: content }
 }
 
 function formatContent(content: MessageContent): { html: string; images: string[] } {

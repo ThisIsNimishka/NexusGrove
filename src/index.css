@@ -553,3 +553,51 @@
 .animate-button-ripple {
   animation: button-ripple 1.5s infinite;
 }
+
+/* ─── Thinking Block pill ─────────────────────────────────────────────────── */
+
+.thinking-block {
+  display: inline-flex;
+  border-radius: 999px;
+  border: 1px solid hsl(var(--border) / 0.4);
+  background: hsl(var(--muted) / 0.2);
+  transition: border-color 0.5s ease, background 0.5s ease, opacity 0.5s ease;
+}
+
+.thinking-block--active {
+  background: hsl(var(--primary) / 0.05);
+  border-color: hsl(var(--primary) / 0.22);
+}
+
+/* Orbit ring — active only */
+.thinking-orbit {
+  border-radius: 50%;
+  border: 1px solid transparent;
+  border-top-color: hsl(var(--primary) / 0.6);
+  animation: thinking-orbit-spin 1.4s linear infinite;
+}
+
+@keyframes thinking-orbit-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Staggered pulse dots */
+@keyframes thinking-pulse {
+
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: scale(0.7);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.3);
+  }
+}
+
+.animate-thinking-pulse {
+  animation: thinking-pulse 1.2s ease-in-out infinite;
+}
